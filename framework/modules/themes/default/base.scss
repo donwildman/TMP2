@@ -1,0 +1,27 @@
+//all browser prefixes
+$default-prefixes: webkit moz ms o;
+
+//build the prefix property
+@mixin build-prefix-values($property, $value, $prefixes: $default-prefixes){
+  @each $prefix in $prefixes {
+      -#{$prefix}-#{$property}: #{$value};
+  }
+  #{$property}: #{$value};
+}
+
+//transition as mixin
+@mixin transition($property: all, $delay: 1s, $timing: linear){
+  $value: $property $delay $timing;
+// use default prefixes
+  @include build-prefix-values('transition', $value);
+}
+
+// examples
+p {
+  @include transition();
+}
+
+// using custom values
+.fast {
+  @include transition('height', '.1s', 'ease');
+}
