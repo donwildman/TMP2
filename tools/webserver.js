@@ -1,5 +1,7 @@
 #! /usr/bin/env node
 
+
+//INFO: navigate to /TMP2/framework and run from there this script
 var http = require('http');
 var fs = require('fs');
 var path = require('path');
