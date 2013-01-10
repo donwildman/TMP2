@@ -67,11 +67,16 @@
         M.Bootstrap._loadScript(url, async, onload);
     }
 
-    M.Bootstrap.loadScript = function( url, async, onSuccess, onError ) {
-        this._loadScript(url, async, onSuccess, onError);
+    //    M.Bootstrap.loadScript = function( url, async, onSuccess, onError ) {
+    //        this._loadScript(url, async, onSuccess, onError);
+    //    }
+
+    //TODO implement onError
+    M.Bootstrap.loadScript = function( url, async, onSuccess ) {
+        this._loadScript(url, async, onSuccess);
     }
 
-    M.Bootstrap._loadScript = function( url, async, onSuccess, onError ) {
+    M.Bootstrap._loadScript = function( url, async, onSuccess /*, onError */ ) {
         var that = this;
         var js = document.createElement("script");
         js.src = url;
