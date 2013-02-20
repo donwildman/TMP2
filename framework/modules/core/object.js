@@ -7,6 +7,12 @@ M.Object = /** @scope M.Object.prototype */ {
      */
     type: 'M.Object',
 
+    /**
+     * This property is used internally in combination with the callFromSuper method.
+     *
+     * @private
+     * @type Object
+     */
     _lastThis: null,
 
     /**
@@ -46,8 +52,8 @@ M.Object = /** @scope M.Object.prototype */ {
         /* assign the properties passed with the arguments array */
         obj.include(properties);
 
-        /* save the prototype in an extra variable */
-        obj._super = this;
+        /* call the new object's init method to initialize it */
+        obj.init();
 
         /* return the new object */
         return obj;
@@ -70,6 +76,16 @@ M.Object = /** @scope M.Object.prototype */ {
     },
 
     /**
+     * This method is called right after the creation of a new object and can be used to
+     * initialize some internal properties.
+     *
+     * This implementation in M.Object only serves as some kind of 'interface' declaration.
+     */
+    init: function() {
+
+    },
+
+    /**
      * Calls a method defined by a handler
      *
      * @param {Object} handler A function, or an object including target and action to use with bindToCaller.
@@ -85,10 +101,17 @@ M.Object = /** @scope M.Object.prototype */ {
         }
     },
 
+    /**
+     * This method returns the prototype implementation of a certain function but binds
+     * it to the 'this' pointer.
+     *
+     * @param functionName
+     * @return {Function} The context bound function.
+     */
     callFromSuper: function( functionName ) {
-        var bind = this._super;
+        var bind = Object.getPrototypeOf(this);
         if( M.Object._lastThis === this ) {
-            bind = bind._super;
+            bind = Object.getPrototypeOf(bind);
         } else {
             M.Object._lastThis = this;
         }

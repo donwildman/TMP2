@@ -93,6 +93,42 @@ test('callFromSuper implementation', function() {
     //M.Lecturer.getAttributeString(); //"firstNameLecturer_lastNameLecturer_idLecturer_workingIdDLecturer"
     ok(M.Lecturer.getAttributeString() === 'firstNameLecturer_lastNameLecturer_idLecturer_workingIdDLecturer', 'calling the own implementation, then the super and the super super one');
 
+    /* cleanup */
+    M.Person = null;
+    M.Student = null;
+    M.Lecturer = null;
+});
+
+test('init implementation', function() {
+
+    ok(M.Object.hasOwnProperty('init'), 'M.Object.init is defined.');
+
+    ok(typeof M.Object.init === 'function', 'M.Object.init() is a function.');
+
+    M.NewObject = M.Object.extend({
+        LEFT: 1,
+        RIGHT: 2,
+        default: null,
+        init: function() {
+            this.default = this.RIGHT;
+        }
+    });
+
+    ok(M.NewObject.default === 2, 'init() was successfully called out of extend().');
+
+    M.NewObject = M.Object.extend({
+        LEFT: 1,
+        RIGHT: 2
+    });
+
+    ok(M.NewObject && typeof M.NewObject === 'object', 'no init() specified but object successfully created.');
+
+    ok(!M.NewObject.hasOwnProperty('init'), 'no init() specified.');
+
+    ok(Object.getPrototypeOf(M.NewObject).hasOwnProperty('init'), 'init() available via prototype.');
+
+    /* cleanup */
+    M.NewObject = null;
 });
 
 /* This usage of callFromSuper isn't good because you say: call my context(this) in the super(prototype) scope
