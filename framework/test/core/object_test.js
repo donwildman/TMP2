@@ -279,6 +279,29 @@ test('handleCallback implementation', function() {
     M.NewObject = null;
 });
 
+test('bindToCaller implementation', function() {
+
+    ok(M.Object.hasOwnProperty('bindToCaller'), 'M.Object.bindToCaller is defined.');
+
+    ok(typeof M.Object.bindToCaller === 'function', 'M.Object.bindToCaller() is a function.');
+
+    M.NewObject = M.Object.extend({
+        testProperty: 123,
+        testMethod: function() {
+            return this.testProperty
+        }
+    });
+
+    ok(M.Object.bindToCaller(M.NewObject, M.NewObject.testMethod, null)() === 123, 'M.Object.bindToCaller() binds the method call properly.');
+
+    throws(M.Object.bindToCaller(M.NewObject, 'testMethod', null), /^M.Exception.INVALID_INPUT_PARAMETER$/, M.Exception.INVALID_INPUT_PARAMETER.message);
+
+    throws(M.Object.bindToCaller('test', M.NewObject.testMethod, null), /^M.Exception.INVALID_INPUT_PARAMETER$/, M.Exception.INVALID_INPUT_PARAMETER.message);
+
+    throws(M.Object.bindToCaller(), /^M.Exception.INVALID_INPUT_PARAMETER$/, M.Exception.INVALID_INPUT_PARAMETER.message);
+
+});
+
 test('M.Object properties', function() {
 
     ok(M.Object.hasOwnProperty('type'), 'M.Object.type is defined.');
@@ -320,7 +343,7 @@ test('create implementation', function() {
 
     ok(!M.TestObject.hasOwnProperty(test), 'The Testobject does not the property as its own');
 
-    M.TestObject = M.Object.create({test: function(param){
+    M.TestObject = M.Object.create({test: function( param ) {
         ok(param === true, 'The Testobject can call a prototype function')
     }});
 
@@ -343,15 +366,8 @@ test('include implementation', function() {
 
     delete M.Object.ping;
 
-
-    throw(M.Object.include({include: 'pong'}), /^M.Exeption.RESERVED_WORD$/, M.Exeption.RESERVED_WORD.message);
-
-    var includeFunction = M.Object.include.toString();
-
-    M.Object.include({include: 'pong'});
-
-    ok(M.Object.include.toString() === includeFunction, 'Call M.Object.include with an object containing include and the M.Object.include is still the same function as before');
-
-
+    throws(function() {
+        M.Object.include({include: function(){}});
+    }, /^M.Exception.RESERVED_WORD$/, M.Exception.RESERVED_WORD.message);
 
 });
