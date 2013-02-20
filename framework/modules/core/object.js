@@ -97,7 +97,7 @@ M.Object = /** @scope M.Object.prototype */ {
         } else if( handler && handler.target && handler.action ) {
             var action = typeof(handler.action) === 'function' ? handler.action : handler.target[handler.action];
             var call = this.bindToCaller(handler.target, action, arg);
-            call();
+            return call();
         }
     },
 
