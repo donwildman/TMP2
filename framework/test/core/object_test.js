@@ -279,6 +279,54 @@ test('handleCallback implementation', function() {
     M.NewObject = null;
 });
 
-test('handleCallback implementation', function() {
+test('M.Object properties', function() {
+
+    ok(M.Object.hasOwnProperty('type'), 'M.Object.type is defined.');
+
+    ok(M.Object.type === 'M.Object', 'M.Object.type is M.Object.');
+
+    ok(M.Object.hasOwnProperty('_lastThis'), 'M.Object._lastThis is defined.');
+
+    ok(typeof M.Object._lastThis === 'object', 'M.Object._lastThis is an object.');
+});
+
+test('create implementation', function() {
+
+    ok(M.Object.hasOwnProperty('create'), 'M.Object.create is defined.');
+
+    ok(typeof M.Object.create === 'function', 'M.Object.create is a function.');
+
+    M.TestObject = M.Object.create();
+
+    ok(M.TestObject, 'Successfully created a Testobject');
+
+    ok(typeof M.TestObject === 'object', 'The Testobject is an object');
+
+    M.TestObject = M.Object.create(M.Object);
+
+    ok(Object.getPrototypeOf(M.TestObject) === M.Object, 'The prototype of Testobject is the paramter');
+
+    ok(M.TestObject = M.Object.create('test'), 'The prototype parameter is a string');
+
+    ok(M.TestObject = M.Object.create([]), 'The prototype parameter is an array');
+
+    ok(M.TestObject = M.Object.create(null), 'The prototype parameter is null');
+
+    ok(M.TestObject = M.Object.create(undefined), 'The prototype parameter is undefined');
+
+    M.TestObject = M.Object.create({test: 'test'});
+
+    ok(M.TestObject.test, 'The Testobject can access the property');
+
+    ok(!M.TestObject.hasOwnProperty(test), 'The Testobject does not the property as its own');
+
+    M.TestObject = M.Object.create({test: function(param){
+        ok(param === true, 'The Testobject can call a prototype function')
+    }});
+
+    M.TestObject.test(true);
+
+    /* cleanup */
+    M.TestObject = null;
 
 });
