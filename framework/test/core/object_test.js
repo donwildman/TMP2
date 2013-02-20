@@ -131,26 +131,150 @@ test('init implementation', function() {
     M.NewObject = null;
 });
 
-/* This usage of callFromSuper isn't good because you say: call my context(this) in the super(prototype) scope
- assuming: M.Object had getInheritance: function(console.log(this.type))
- M.View = {};
+test('handleCallback implementation', function() {
 
- M.View = M.Object.extend({
- type: 'M.View',
- name: 'test',
- getInheritance: function() {
- console.log(this.type);
- if(this._super) {
- this.callFromSuper('getInheritance');
- }
- }
- });
+    ok(M.Object.hasOwnProperty('handleCallback'), 'M.Object.handleCallback is defined.');
 
- M.ButtonView = M.View.extend({
- type: 'M.ButtonView'
- });
+    ok(typeof M.Object.handleCallback === 'function', 'M.Object.handleCallback() is a function.');
 
- M.MyButtonView = M.ButtonView.extend({
- type: 'M.MyButtonView'
- });
- */
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: 'init'
+    }, [1, 2, {}, 4]), 'target is an object, action is a string, arguments is an array.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: 'init'
+    }, null), 'target is an object, action is a string, arguments is null.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: 'init'
+    }), 'target is an object, action is a string, arguments is undefined.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: function() {
+        }
+    }, [1, 2, {}, 4]), 'target is an object, action is a function, arguments is an array.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: function() {
+        }
+    }, null), 'target is an object, action is a function, arguments is null.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: function() {
+        }
+    }), 'target is an object, action is a function, arguments is undefined.');
+
+    throws(M.Object.handleCallback({
+        action: function() {
+        }
+    }, [1, 2, {}, 4]), 'target is undefined, action is a function, arguments is an array.');
+
+    throws(M.Object.handleCallback({
+        action: function() {
+        }
+    }, [1, 2, {}, 4]), 'target is undefined, action is a function, arguments is an array.');
+
+    throws(M.Object.handleCallback({
+        action: function() {
+        }
+    }, null), 'target is undefined, action is a function, arguments is null.');
+
+    throws(M.Object.handleCallback({
+        action: function() {
+        }
+    }), 'target is undefined, action is a function, arguments is undefined.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: 'undefinedMethod'
+    }, [1, 2, {}, 4]), 'target is an object, action is a string (but the method is not available), arguments is an array.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: 'undefinedMethod'
+    }, null), 'target is an object, action is a string (but the method is not available), arguments is null.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: 'undefinedMethod'
+    }), 'target is an object, action is a string (but the method is not available), arguments is undefined.');
+
+    throws(M.Object.handleCallback({
+        target: M.UndefinedObject,
+        action: 'init'
+    }, [1, 2, {}, 4]), 'target is undefined, action is a string, arguments is an array.');
+
+    throws(M.Object.handleCallback({
+        target: M.UndefinedObject,
+        action: 'init'
+    }, null), 'target is undefined, action is a string, arguments is null.');
+
+    throws(M.Object.handleCallback({
+        target: M.UndefinedObject,
+        action: 'init'
+    }), 'target is undefined, action is a string, arguments is undefined.');
+
+    throws(M.Object.handleCallback({
+        target: M.UndefinedObject,
+        action: 'undefinedMethod'
+    }, [1, 2, {}, 4]), 'target is undefined, action is a string (but the method is not available), arguments is an array.');
+
+    throws(M.Object.handleCallback({
+        target: M.UndefinedObject,
+        action: 'undefinedMethod'
+    }, null), 'target is undefined, action is a string (but the method is not available), arguments is null.');
+
+    throws(M.Object.handleCallback({
+        target: M.UndefinedObject,
+        action: 'undefinedMethod'
+    }), 'target is undefined, action is a string (but the method is not available), arguments is undefined.');
+
+    throws(M.Object.handleCallback(), 'No parameters given.');
+
+    throws(M.Object.handleCallback(function() {
+    }, [1, 2, 3], 'test', {test: 'yes'}), 'Stupid parameters given (function, array, string, object).');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        action: 'type'
+    }, null), 'action is a property of target, but no a function.');
+
+    throws(M.Object.handleCallback({
+        target: M.Object,
+        property: 'type'
+    }, null), 'action is called property.');
+
+    throws(M.Object.handleCallback({
+        prop1: M.Object,
+        prop2: 'type'
+    }, null), 'target/action are called prop1/prop2.');
+
+    M.NewObject = M.Object.extend({
+        test: function( a, b, c ) {
+            ok((a + b + c) === 6, 'action is properly called (check within the called function).');
+        }
+    });
+    M.Object.handleCallback({
+        target: M.NewObject,
+        action: 'test'
+    }, [1, 2, 3]);
+
+    M.NewObject = M.Object.extend({
+        test: function( a, b, c ) {
+            return a + b + c;
+        }
+    });
+    ok(M.Object.handleCallback({
+        target: M.NewObject,
+        action: 'test'
+    }, [1, 2, 3]) === 6, 'action is property called (check the return value).');
+
+    /* cleanup */
+    M.NewObject = null;
+});
