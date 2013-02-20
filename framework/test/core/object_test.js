@@ -330,3 +330,28 @@ test('create implementation', function() {
     M.TestObject = null;
 
 });
+
+test('include implementation', function() {
+
+    ok(M.Object.hasOwnProperty('include'), 'M.Object.include is defined.');
+
+    ok(typeof M.Object.include === 'function', 'M.Object.include is a function.');
+
+    M.Object.include({ping: 'pong'});
+
+    ok(typeof M.Object.ping === 'string' && M.Object.ping === 'pong', 'M.Object.include included a Testobject.');
+
+    delete M.Object.ping;
+
+
+    throw(M.Object.include({include: 'pong'}), /^M.Exeption.RESERVED_WORD$/, M.Exeption.RESERVED_WORD.message);
+
+    var includeFunction = M.Object.include.toString();
+
+    M.Object.include({include: 'pong'});
+
+    ok(M.Object.include.toString() === includeFunction, 'Call M.Object.include with an object containing include and the M.Object.include is still the same function as before');
+
+
+
+});
