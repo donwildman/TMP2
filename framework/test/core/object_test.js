@@ -278,3 +278,7 @@ test('handleCallback implementation', function() {
     /* cleanup */
     M.NewObject = null;
 });
+
+test('handleCallback implementation', function() {
+
+});
