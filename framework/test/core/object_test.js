@@ -371,3 +371,38 @@ test('include implementation', function() {
     }, /^M.Exception.RESERVED_WORD$/, M.Exception.RESERVED_WORD.message);
 
 });
+
+test('extend implementation', function() {
+
+    ok(M.Object.hasOwnProperty('extend'), 'M.Object.extend is defined.');
+
+    ok(typeof M.Object.extend === 'function', 'M.Object.extend is a function.');
+
+    M.TestObject = M.Object.extend({
+       prop1: 'prop1'
+    });
+
+    ok(M.TestObject.hasOwnProperty('prop1'), 'Testobject was created with own property.');
+
+    ok(Object.getPrototypeOf(M.TestObject) === M.Object, 'The Prototype of Testobject is M.Object.');
+
+    M.TestObject = M.Object.extend({
+        prop1: 'prop1',
+        init: function(){
+            ok(this.prop1 === 'prop1', 'init of the testobject was called')
+        }
+    });
+
+    M.TestObject = M.Object.extend({
+        prop1: 'prop1',
+        func: function(){
+            ok(this.prop1 === 'prop1', 'Testobject has own function implementation')
+        },
+        init: function(){
+            this.func();
+        }
+    });
+
+    /* cleanup */
+    M.TestObject = null;
+});
