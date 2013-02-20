@@ -34,6 +34,9 @@ M.Object = /** @scope M.Object.prototype */ {
      */
     include: function( properties ) {
         for( var prop in properties ) {
+            if(this.hasOwnProperty(prop)) {
+                throw M.Exception.RESERVED_WORD.getException();
+            }
             this[prop] = properties[prop];
         }
     },

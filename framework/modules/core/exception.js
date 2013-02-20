@@ -40,3 +40,8 @@ M.Exception.INVALID_INPUT_PARAMETER = M.Exception.extend(/** @scope M.Exception.
     message: 'At least one input parameter doesn\'t match the expected criteria.',
     name: 'INVALID_INPUT_PARAMETER'
 });
+
+M.Exception.RESERVED_WORD = M.Exception.extend(/** @scope M.Exception.prototype */{
+    message: 'Usage of a reserved word.',
+    name: 'RESERVED_WORD'
+});
