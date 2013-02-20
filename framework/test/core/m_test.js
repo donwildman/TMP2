@@ -6,26 +6,14 @@ test('M. Namespace', function () {
     ok(typeof M.Version === 'string', 'M.Version is a string');
     ok(parseInt(M.Version.split('.')[0]) >= 2, 'old TMP version ');
 
-    ok(m_require, 'm_require is defined');
-    ok(typeof m_require === 'function', 'm_require is a function');
-
     ok(!NO, 'NO is defined');
+
     ok(typeof NO === 'boolean', 'NO is a boolean');
     ok(NO === false, 'NO equals false');
-
     ok(YES, 'YES is defined');
+
     ok(typeof YES === 'boolean', 'YES is a boolean');
     ok(YES === true, 'YES equals true');
-
-    if( true ) {
-
-    } else {
-
-    }
-
-    ok(M.hasOwnProperty('META_CREATED_AT') && '_createdAt');
-    M.META_UPDATED_AT = '_updatedAt';
-    M.META_M_ID = '_m_id';
 
     ok(M.LOCAL_STORAGE_PREFIX && M.hasOwnProperty('LOCAL_STORAGE_PREFIX'), 'M.LOCAL_STORAGE_PREFIX is defined');
     ok(typeof M.LOCAL_STORAGE_PREFIX === 'string', 'M.LOCAL_STORAGE_PREFIX is a string');
@@ -34,6 +22,9 @@ test('M. Namespace', function () {
     ok(M.LOCAL_STORAGE_SUFFIX && M.hasOwnProperty('LOCAL_STORAGE_SUFFIX'), 'M.LOCAL_STORAGE_SUFFIX is defined');
     ok(typeof M.LOCAL_STORAGE_SUFFIX === 'string', 'M.LOCAL_STORAGE_SUFFIX is a string');
     ok(M.LOCAL_STORAGE_SUFFIX === '_', 'M.LOCAL_STORAGE_SUFFIX equals _');
+
+    ok(typeof m_require !== 'undefined', 'm_require is defined');
+    ok(typeof m_require === 'function', 'm_require is a function');
 });
 
 test('locale storage', function () {
