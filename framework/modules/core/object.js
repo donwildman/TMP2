@@ -34,7 +34,7 @@ M.Object = /** @scope M.Object.prototype */ {
      */
     include: function( properties ) {
         for( var prop in properties ) {
-            if(this.hasOwnProperty(prop)) {
+            if( this.hasOwnProperty(prop) ) {
                 throw M.Exception.RESERVED_WORD.getException();
             }
             this[prop] = properties[prop];
@@ -97,13 +97,20 @@ M.Object = /** @scope M.Object.prototype */ {
      * @param {Object} handler A function, or an object including target and action to use with bindToCaller.
      * @param {Object} arg One or more arguments.
      */
-    handleCallback: function( handler, arg ) {
-        if( typeof(handler) === 'function' ) {
-            handler(arg);
-        } else if( handler && handler.target && handler.action ) {
-            var action = typeof(handler.action) === 'function' ? handler.action : handler.target[handler.action];
-            var call = this.bindToCaller(handler.target, action, arg);
-            return call();
+    handleCallback: function( handler ) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        if (handler) {
+            var target = typeof handler.target === 'object' ? handler.target : this;
+            var action = handler;
+            if (typeof handler.action === 'function') {
+                action = handler.action;
+            } else if (typeof handler.action === 'string') {
+                action = target[handler.action];
+            }
+            if (typeof action === 'function') {
+                return this.bindToCaller(target, action, args)();
+            }
+//            throw M.Exception.INVALID_INPUT_PARAMETER.getException();
         }
     },
 

@@ -263,7 +263,7 @@ test('handleCallback implementation', function() {
     M.Object.handleCallback({
         target: M.NewObject,
         action: 'test'
-    }, [1, 2, 3]);
+    }, 1, 2, 3);
 
     M.NewObject = M.Object.extend({
         test: function( a, b, c ) {
@@ -273,7 +273,7 @@ test('handleCallback implementation', function() {
     ok(M.Object.handleCallback({
         target: M.NewObject,
         action: 'test'
-    }, [1, 2, 3]) === 6, 'action is property called (check the return value).');
+    }, 1, 2, 3) === 6, 'action is property called (check the return value).');
 
     /* cleanup */
     M.NewObject = null;
