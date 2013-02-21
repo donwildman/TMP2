@@ -1,5 +1,5 @@
 test('M Namespace', function () {
-    ok(M, 'M is defined!');
+    ok(M, 'M is defined');
     ok(typeof M === 'object', 'M is an object');
 
     ok(M.Version && M.hasOwnProperty('Version'), 'M.Version is defined');
