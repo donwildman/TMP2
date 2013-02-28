@@ -354,6 +354,88 @@ test('create implementation', function() {
 
 });
 
+test('defineHiddenProperty implementation', function() {
+
+    ok(M.Object.hasOwnProperty('defineHiddenProperty'), 'M.Object.defineHiddenProperty is defined.');
+
+    ok(typeof M.Object.defineHiddenProperty === 'function', 'M.Object.defineHiddenProperty is a function.');
+
+    M.Object.defineHiddenProperty('hidden', 'pong');
+
+    ok(M.Object.hasOwnProperty('hidden'), 'The test property has been created.');
+
+    ok(!M.Object.propertyIsEnumerable('hidden'), 'The test property is not enumerable.');
+
+    ok(M.Object.hidden === 'pong', 'The test property holds the given value.');
+
+    M.Object.hidden = 23;
+
+    ok(M.Object.hidden === 23, 'The test property can be changed to an other value and type.');
+
+    M.TestObject = M.Object.extend({
+       prop1: 'prop1'
+    });
+
+    ok(M.TestObject.hidden === 23, 'The test property is available in extended object.');
+
+    ok(!M.Object.propertyIsEnumerable('hidden'), 'The test property is still not enumerable in extended object.');
+
+    delete M.Object['hidden'];
+
+    ok(!M.Object.hasOwnProperty('hidden'), 'The test property can be deleted.');
+
+    M.Object.defineHiddenProperty('hidden');
+
+    ok(M.Object.hasOwnProperty('hidden') && typeof M.Object.hidden === 'undefined', 'The test property can be undefined.');
+
+    /* cleanup */
+    delete M.Object['hidden'];
+    M.TestObject = null;
+
+});
+
+test('defineReadonlyProperty implementation', function() {
+
+    ok(M.Object.hasOwnProperty('defineReadonlyProperty'), 'M.Object.defineReadonlyProperty is defined.');
+
+    ok(typeof M.Object.defineReadonlyProperty === 'function', 'M.Object.defineReadonlyProperty is a function.');
+
+    M.Object.defineReadonlyProperty('readonly', 'pong');
+
+    ok(M.Object.hasOwnProperty('readonly'), 'The test property has been created.');
+
+    ok(M.Object.propertyIsEnumerable('readonly'), 'The test property is enumerable.');
+
+    ok(M.Object.readonly === 'pong', 'The test property holds the given value.');
+
+    M.Object.readonly = 'ping';
+
+    ok(M.Object.readonly === 'pong', 'The test property can not be changed.');
+
+    M.TestObject = M.Object.extend({
+        prop1: 'prop1'
+    });
+
+    ok(M.TestObject.readonly === 'pong', 'The test property is available in extended object.');
+
+    M.TestObject.readonly = 'ping';
+
+    ok(M.TestObject.readonly === 'pong', 'The test property can still not be changed in extended object.');
+
+    delete M.Object['readonly'];
+
+    ok(!M.Object.hasOwnProperty('readonly'), 'The test property can be deleted.');
+
+    M.Object.defineReadonlyProperty('readonly');
+
+    ok(M.Object.hasOwnProperty('readonly') && typeof M.Object.hidden === 'undefined', 'The test property can be undefined.');
+
+    /* cleanup */
+    delete M.Object['readonly'];
+    M.TestObject = null;
+
+});
+
 test('include implementation', function() {
 
     ok(M.Object.hasOwnProperty('include'), 'M.Object.include is defined.');
@@ -406,3 +488,4 @@ test('extend implementation', function() {
     /* cleanup */
     M.TestObject = null;
 });
+

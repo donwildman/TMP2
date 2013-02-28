@@ -95,7 +95,6 @@ M.Object = /** @scope M.Object.prototype */ {
      * Calls a method defined by a handler
      *
      * @param {Object} handler A function, or an object including target and action to use with bindToCaller.
-     * @param {Object} arg One or more arguments.
      */
     handleCallback: function( handler ) {
         var args = Array.prototype.slice.call(arguments, 1);
@@ -110,7 +109,6 @@ M.Object = /** @scope M.Object.prototype */ {
             if (typeof action === 'function') {
                 return this.bindToCaller(target, action, args)();
             }
-//            throw M.Exception.INVALID_INPUT_PARAMETER.getException();
         }
     },
 
@@ -129,6 +127,35 @@ M.Object = /** @scope M.Object.prototype */ {
             M.Object._lastThis = this;
         }
         return this.bindToCaller(this, bind[functionName])();
+    },
+
+    /**
+     * Define hidden property
+     * @param {String} name
+     * @param {Mixed} value
+     */
+    defineHiddenProperty: function(name, value) {
+        Object.defineProperty(this, name, {
+            writable: true,
+            enumerable: false,
+            configurable: true,
+            value: value
+        });
+    },
+
+    /**
+     * Define readonly property on object
+     *
+     * @param {String} name
+     * @param {Mixed} value
+     */
+    defineReadonlyProperty: function(name, value) {
+        Object.defineProperty(this, name, {
+            writable: false,
+            enumerable: true,
+            configurable: true,
+            value: value
+        });
     }
 
 };
