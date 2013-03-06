@@ -160,6 +160,7 @@ M.Object = /** @scope M.Object.prototype */ {
      * @param {Object} config
      */
     defineProperty: function(name, value, config) {
+        config = config || {};
         Object.defineProperty(this, name, {
             writable: config.writable !== NO,
             enumerable: config.enumerable !== NO,
