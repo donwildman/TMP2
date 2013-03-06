@@ -136,7 +136,9 @@ M.Object = /** @scope M.Object.prototype */ {
      */
     defineHiddenProperty: function(name, value) {
         this.defineProperty(name, value, {
-            enumerable: NO
+            writable: YES,
+            enumerable: NO,
+            configurable: YES
         });
     },
 
@@ -148,7 +150,9 @@ M.Object = /** @scope M.Object.prototype */ {
      */
     defineReadonlyProperty: function(name, value) {
         this.defineProperty(name, value, {
-            writable: NO
+            writable: NO,
+            enumerable: YES,
+            configurable: YES
         });
     },
 
@@ -162,9 +166,9 @@ M.Object = /** @scope M.Object.prototype */ {
     defineProperty: function(name, value, config) {
         config = config || {};
         Object.defineProperty(this, name, {
-            writable: config.writable !== NO,
-            enumerable: config.enumerable !== NO,
-            configurable: config.configurable !== NO,
+            writable: !!config.writable,
+            enumerable: !!config.enumerable,
+            configurable: !!config.configurable,
             value: value
         });
     },
