@@ -455,16 +455,21 @@ test('defineProperty implementation', function() {
 
     ok(M.Object.readonly === 'pong', 'The test property can not be changed.');
 
-    M.Object.defineProperty('allNo', 'pong', {writable: NO, configurable: NO, enumerable: NO});
+    M.TestObject = M.Object.extend();
 
-    ok(M.Object.allNo === 'pong', 'The test property can not be changed.');
+    M.TestObject.defineProperty('allNo', 'pong', {writable: NO, configurable: NO, enumerable: NO});
 
-    ok(M.Object.propertyIsEnumerable('allNo') === NO, 'The test property is enumerable.');
+    ok(M.TestObject.allNo === 'pong', 'The test property can not be changed.');
 
+    ok(M.TestObject.propertyIsEnumerable('allNo') === NO, 'The test property is enumerable.');
 
-    M.Object.allNo = 'ping';
+    ok(Object.getOwnPropertyNames(M.TestObject).length === 1, 'The test property is in own property names.');
 
-    ok(M.Object.allNo === 'pong', 'The test property can not be changed.');
+    ok(Object.keys(M.TestObject).length === 0, 'The test property is in hidden.');
+
+    M.TestObject.allNo = 'ping';
+
+    ok(M.TestObject.allNo === 'pong', 'The test property can not be changed.');
 
     var obj = M.Object.extend({
         marco: 1,
@@ -479,6 +484,19 @@ test('defineProperty implementation', function() {
     });
     ok(Object.keys(obj).length === ['marco', 'dom'].length && allright, 'basti is defined as a hidden property.');
 
+    var t1 = M.Object.extend();
+    var t2 = M.Object.extend();
+
+    t1.defineProperty('test', 'test');
+    Object.defineProperty(t2,'test',{value:'test'});
+
+    ok(t1.test === t2.test, 'M.Object.defineProperty implements a test object with the same value as Object.defineProperty');
+    ok(t1.propertyIsEnumerable(test) === t2.propertyIsEnumerable(test), 'M.Object.defineProperty implements a test object with the same enumerable state as Object.defineProperty');
+
+    t1.test = 'changed';
+    t2.test = 'changed';
+
+    ok(t1.test === t2.test === changed, 'M.Object.defineProperty implements a test object with the same writeable state as Object.defineProperty');
 
     /* cleanup */
     delete M.Object['readonly'];
