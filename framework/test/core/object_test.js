@@ -390,6 +390,7 @@ test('defineHiddenProperty implementation', function() {
 
     /* cleanup */
     delete M.Object['hidden'];
+    delete M.Object['readonly'];
     M.TestObject = null;
 
 });
@@ -445,7 +446,7 @@ test('defineProperty implementation', function() {
 
     ok(M.Object.hasOwnProperty('normal'), 'The test property has been created.');
 
-    ok(M.Object.propertyIsEnumerable('normal'), 'The test property is enumerable.');
+    ok(!M.Object.propertyIsEnumerable('normal'), 'The test property is not enumerable.');
 
     M.Object.defineProperty('readonly', 'pong', {writable: NO});
 
@@ -540,5 +541,28 @@ test('extend implementation', function() {
 
     /* cleanup */
     M.TestObject = null;
+});
+
+test('keys implementation', function() {
+
+    ok(M.Object.hasOwnProperty('keys'), 'M.Object.keys is defined.');
+
+    ok(typeof M.Object.keys === 'function', 'M.Object.keys is a function.');
+
+    ok(Array.isArray(M.Object.keys()), 'M.Object.keys returns an array.');
+
+    var obj = M.Object.extend({
+        prop1: 1,
+        prop2: 2
+    });
+    ok(Object.keys(obj).toString() === obj.keys().toString(), 'M.Object.keys() returns the exact same thing as Object.keys().');
+
+    ok(obj.keys().length === 2, 'M.Object.keys() returns the names of the objects only two properties.');
+
+    obj.defineHiddenProperty('prop3', 3);
+    ok(obj.keys().length === 2, 'M.Object.keys() returns the names of the objects only two properties (even if there is a third hidden property).');
+
+    ok(M.Object.extend().keys().length === 0, 'M.Object.extend().keys() returns an empty array since there are no own properties.');
+
 });
 
