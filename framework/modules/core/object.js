@@ -135,11 +135,8 @@ M.Object = /** @scope M.Object.prototype */ {
      * @param {Mixed} value
      */
     defineHiddenProperty: function(name, value) {
-        Object.defineProperty(this, name, {
-            writable: true,
-            enumerable: false,
-            configurable: true,
-            value: value
+        this.defineProperty(name, value, {
+            enumerable: NO
         });
     },
 
@@ -150,10 +147,23 @@ M.Object = /** @scope M.Object.prototype */ {
      * @param {Mixed} value
      */
     defineReadonlyProperty: function(name, value) {
+        this.defineProperty(name, value, {
+            writable: NO
+        });
+    },
+
+    /**
+     * Define new property on object and set hidden/readonly flags.
+     *
+     * @param {String} name
+     * @param {Mixed} value
+     * @param {Object} config
+     */
+    defineProperty: function(name, value, config) {
         Object.defineProperty(this, name, {
-            writable: false,
-            enumerable: true,
-            configurable: true,
+            writable: config.writable !== NO,
+            enumerable: config.enumerable !== NO,
+            configurable: config.configurable !== NO,
             value: value
         });
     }
