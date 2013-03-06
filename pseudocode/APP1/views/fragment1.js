@@ -15,6 +15,11 @@ APP1.Page1 = M.ContainerView.extend({
            action: function() {
 
            }
+       },
+       show: {
+           action: function() {
+
+           }
        }
    },
 
