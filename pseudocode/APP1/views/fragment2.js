@@ -1,4 +1,4 @@
-APP1.Page1 = M.ContainerView.extend({
+APP1.Page2 = M.ContainerView.extend({
 
    events: {
        load: {
@@ -27,15 +27,7 @@ APP1.Page1 = M.ContainerView.extend({
 
     label: M.LabelView.design({
 
-        value: 'HALLO WELT',
-
-        events: {
-            tap: {
-                action: function() {
-                    APP1.ApplicationController.template.setContent('Page2');
-                }
-            }
-        }
+        value: 'SEITE 2'
 
     })
 
