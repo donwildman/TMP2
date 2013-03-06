@@ -461,14 +461,31 @@ test('defineProperty implementation', function() {
 
     ok(M.Object.propertyIsEnumerable('allNo') === NO, 'The test property is enumerable.');
 
+
     M.Object.allNo = 'ping';
 
     ok(M.Object.allNo === 'pong', 'The test property can not be changed.');
+
+    var obj = M.Object.extend({
+        marco: 1,
+        dom: 2
+    });
+    obj.defineHiddenProperty('basti', 3);
+    var allright = YES;
+    Object.keys(obj).forEach(function( prop ) {
+        if( !(prop === 'marco' || prop === 'dom') ) {
+            allright = NO;
+        }
+    });
+    ok(Object.keys(obj).length === ['marco', 'dom'].length && allright, 'basti is defined as a hidden property.');
+
 
     /* cleanup */
     delete M.Object['readonly'];
     delete M.Object['normal'];
     M.TestObject = null;
+    obj = null;
+    allright = null;
 });
 
 test('include implementation', function() {

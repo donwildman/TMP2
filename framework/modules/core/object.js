@@ -167,6 +167,15 @@ M.Object = /** @scope M.Object.prototype */ {
             configurable: config.configurable !== NO,
             value: value
         });
+    },
+
+    /**
+     * Returns an array of keys of the objects public own properties.
+     *
+     * @return {Array}
+     */
+    keys: function() {
+        return Object.keys(this);
     }
 
 };
