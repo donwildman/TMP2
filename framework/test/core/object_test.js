@@ -373,7 +373,7 @@ test('defineHiddenProperty implementation', function() {
     ok(M.Object.hidden === 23, 'The test property can be changed to an other value and type.');
 
     M.TestObject = M.Object.extend({
-       prop1: 'prop1'
+        prop1: 'prop1'
     });
 
     ok(M.TestObject.hidden === 23, 'The test property is available in extended object.');
@@ -436,6 +436,41 @@ test('defineReadonlyProperty implementation', function() {
 
 });
 
+test('defineProperty implementation', function() {
+    ok(M.Object.hasOwnProperty('defineProperty'), 'M.Object.defineProperty is defined.');
+
+    ok(typeof M.Object.defineProperty === 'function', 'M.Object.defineProperty is a function.');
+
+    M.Object.defineProperty('normal', 'pong');
+
+    ok(M.Object.hasOwnProperty('normal'), 'The test property has been created.');
+
+    ok(M.Object.propertyIsEnumerable('normal'), 'The test property is enumerable.');
+
+    M.Object.defineProperty('readonly', 'pong', {writable: NO});
+
+    ok(M.Object.readonly === 'pong', 'The test property holds the given value.');
+
+    M.Object.readonly = 'ping';
+
+    ok(M.Object.readonly === 'pong', 'The test property can not be changed.');
+
+    M.Object.defineProperty('allNo', 'pong', {writable: NO, configurable: NO, enumerable: NO});
+
+    ok(M.Object.allNo === 'pong', 'The test property can not be changed.');
+
+    ok(M.Object.propertyIsEnumerable('allNo'), 'The test property is enumerable.');
+
+    M.Object.allNo = 'ping';
+
+    ok(M.Object.allNo === 'pong', 'The test property can not be changed.');
+
+    /* cleanup */
+    delete M.Object['readonly'];
+    delete M.Object['normal'];
+    M.TestObject = null;
+});
+
 test('include implementation', function() {
 
     ok(M.Object.hasOwnProperty('include'), 'M.Object.include is defined.');
@@ -449,7 +484,8 @@ test('include implementation', function() {
     delete M.Object.ping;
 
     throws(function() {
-        M.Object.include({include: function(){}});
+        M.Object.include({include: function() {
+        }});
     }, /^M.Exception.RESERVED_WORD$/, M.Exception.RESERVED_WORD.message);
 
 });
@@ -461,7 +497,7 @@ test('extend implementation', function() {
     ok(typeof M.Object.extend === 'function', 'M.Object.extend is a function.');
 
     M.TestObject = M.Object.extend({
-       prop1: 'prop1'
+        prop1: 'prop1'
     });
 
     ok(M.TestObject.hasOwnProperty('prop1'), 'Testobject was created with own property.');
@@ -470,17 +506,17 @@ test('extend implementation', function() {
 
     M.TestObject = M.Object.extend({
         prop1: 'prop1',
-        init: function(){
+        init: function() {
             ok(this.prop1 === 'prop1', 'init of the testobject was called')
         }
     });
 
     M.TestObject = M.Object.extend({
         prop1: 'prop1',
-        func: function(){
+        func: function() {
             ok(this.prop1 === 'prop1', 'Testobject has own function implementation')
         },
-        init: function(){
+        init: function() {
             this.func();
         }
     });
