@@ -1,0 +1,21 @@
+APP1.ApplicationController = M.Controller.extend({
+
+    isAppInitialized: NO,
+
+   initApplication: function() {
+       if(this.isAppInitialized) {
+           return;
+       }
+
+       this.setTemplate(M.TemplateOnePage);
+
+       this.template.setContent({
+            firstArea: {
+                content: APP1.Page1
+            }
+       });
+
+       this.isAppInitialized = YES;
+   }
+
+});
