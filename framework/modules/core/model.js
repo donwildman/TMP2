@@ -18,7 +18,7 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
             _fields: {}
         });
 
-        mode._name = obj.config.name;
+        model._name = obj.config.name;
 
         _.each(obj, function(prop, key) {
             if( _.isFunction(prop)) {
