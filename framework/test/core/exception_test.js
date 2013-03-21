@@ -2,8 +2,8 @@ test('M.Exception implementation', function() {
     ok(M.Exception, 'M.Exception is defined');
     ok(typeof M.Exception === 'object', 'M.Exception is an object');
 
-    ok(M.Exception.type && M.Exception.type === 'M.Exception', 'M.Exception.type is M.Exception');
-    ok(typeof M.Exception.type === 'string', 'M.Exception.type is a string');
+    ok(M.Exception._type && M.Exception._type === 'M.Exception', 'M.Exception._type is M.Exception');
+    ok(typeof M.Exception._type === 'string', 'M.Exception._type is a string');
 
     ok(M.Exception.hasOwnProperty('message') && typeof M.Exception.message === 'string', 'M.Exception.message is defined.');
     ok(M.Exception.hasOwnProperty('name') && typeof M.Exception.name === 'string', 'M.Exception.name is defined.');

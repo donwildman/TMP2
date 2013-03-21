@@ -5,7 +5,7 @@ M.Exception = M.Object.extend(/** @scope M.Object.prototype */ {
      *
      * @type String
      */
-    type: 'M.Exception',
+    _type: 'M.Exception',
 
     /**
      * The message of the exception (defined by the concrete instance).
@@ -30,7 +30,7 @@ M.Exception = M.Object.extend(/** @scope M.Object.prototype */ {
             message: this.message,
             name: this.name,
             toString: function() {
-                return that.type + '.' + that.name;
+                return that._type + '.' + that.name;
             }
         }
     }

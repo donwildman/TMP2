@@ -304,9 +304,11 @@ test('bindToCaller implementation', function() {
 
 test('M.Object properties', function() {
 
-    ok(M.Object.hasOwnProperty('type'), 'M.Object.type is defined.');
+    ok(M.Object.hasOwnProperty('_type'), 'M.Object._type is defined.');
 
-    ok(M.Object.type === 'M.Object', 'M.Object.type is M.Object.');
+    ok(M.Object._type === 'M.Object', 'M.Object._type is M.Object.');
+
+    ok(M.Object.getObjectType() === 'M.Object', 'M.Object.getObjectType() is M.Object.');
 
     ok(M.Object.hasOwnProperty('_lastThis'), 'M.Object._lastThis is defined.');
 

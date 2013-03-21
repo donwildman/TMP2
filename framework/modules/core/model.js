@@ -6,15 +6,15 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
      *
      * @type String
      */
-    type: 'M.Model',
+    _type: 'M.Model',
 
-    _record: null,
+    _data: null,
     _fields: null,
     _dataProvider: null,
 
     create: function(obj) {
         var model = this.extend({
-            _record: {},
+            _data: {},
             _fields: {}
         });
 
@@ -52,17 +52,17 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     get: function(propName) {
-        return this._record[propName];
+        return this._data[propName];
     },
 
     set: function(propName, value) {
-        this._record[propName, value];
+        this._data[propName, value];
     },
 
     /**
      * Returns the blank meta data fields object (contains fields information)
      *
-     * @returns {Object} _record The meta data object of a model record
+     * @returns {Object} _data The meta data object of a model record
      */
     getFields: function() {
         return this._fields;
@@ -71,10 +71,10 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     /**
      * Returns the blank data record, that is just a plain old JS object
      *
-     * @returns {Object} _record The data object of a model record
+     * @returns {Object} _data The data object of a model record
      */
     getRecord: function() {
-        return this._record;
+        return this._data;
     },
 
     _setFields: function(fieldsDefinition) {
@@ -82,10 +82,10 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     _setRecord: function(rec) {
-        this._record = rec;
+        this._data = rec;
     },
 
     _deleteFromRecord: function(propName) {
-        delete this._record[propName];
+        delete this._data[propName];
     }
-})
+});
