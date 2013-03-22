@@ -2,7 +2,27 @@ test('M.View Test', function() {
 
     ok(M.hasOwnProperty('View'), 'M.View is defined.');
 
+    ok(M.View.hasOwnProperty('_html') && typeof M.View._html === 'string', 'M.View has _html property.');
+
     ok(M.View.hasOwnProperty('_render') && typeof M.View._render === 'function', '_render function is defined.');
+
+    ok(M.View.hasOwnProperty('render') && typeof M.View.render === 'function', 'render function is defined.');
+
+    var renderString = M.View.render();
+
+    ok(typeof renderString === 'string', '_render returns a string.');
+
+    M.Test = M.View.extend({
+        postRender: function(){
+            ok(true, 'postRender was called in the render process.');
+        },
+
+        preRender: function(){
+            ok(true, 'preRender was called in the render process.');
+        }
+    });
+
+    M.Test.render();
 
     ok(M.View.hasOwnProperty('_theme')  && typeof M.View._theme === 'function', '_theme function is defined.');
 
@@ -71,6 +91,8 @@ test('M.View Test', function() {
     var childViewsAsArray = M.Test.getChildViewsAsArray();
 
     ok(childViewsAsArray.lenght === 2 && childViewsAsArray[0] === 'firstChild' && childViewsAsArray[1] === 'secondChild', 'getChildViewsAsArray returns an Array with two elements.');
+
+
 
     /* cleanup */
     M.Test = null;
