@@ -2,6 +2,7 @@ MyApp.ApplicationController = M.Controller.extend({
 
     initApplication: function() {
         this.setTemplate(M.PageOneTemplate);
+        this.
         this.setContent(MyApp.StartScreen);
     }
 
