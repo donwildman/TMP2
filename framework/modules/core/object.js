@@ -55,8 +55,8 @@ M.Object = /** @scope M.Object.prototype */ {
         /* assign the properties passed with the arguments array */
         obj.include(properties);
 
-        /* call the new object's init method to initialize it */
-        obj.init();
+        /* call the new object's _init method to initialize it */
+        obj._init();
 
         /* return the new object */
         return obj;
@@ -86,8 +86,10 @@ M.Object = /** @scope M.Object.prototype */ {
      * initialize some internal properties.
      *
      * This implementation in M.Object only serves as some kind of 'interface' declaration.
+     *
+     * @private
      */
-    init: function() {
+    _init: function() {
 
     },
 
