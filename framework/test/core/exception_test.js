@@ -1,4 +1,4 @@
-test('M.Exeption implementation', function() {
+test('M.Exception implementation', function() {
     ok(M.Exception, 'M.Exception is defined');
     ok(typeof M.Exception === 'object', 'M.Exception is an object');
 
