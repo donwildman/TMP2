@@ -5,7 +5,7 @@ M.Object = /** @scope M.Object.prototype */ {
      *
      * @type String
      */
-    type: 'M.Object',
+    _type: 'M.Object',
 
     /**
      * This property is used internally in combination with the callFromSuper method.
@@ -180,6 +180,15 @@ M.Object = /** @scope M.Object.prototype */ {
      */
     keys: function() {
         return Object.keys(this);
+    },
+
+    /**
+     * Returns the type the object.
+     *
+     * @return {String}
+     */
+    getObjectType: function() {
+        return this._type;
     }
 
 };
