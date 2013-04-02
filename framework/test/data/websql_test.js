@@ -133,12 +133,32 @@ asyncTest('M.WebSqlConnector basics', function () {
                     onSuccess: function(result) {
                         ok(result.getAt(0).bmi === person.get('bmi'), 'Field "bmi" has correct updated value.');
                     },
-                    onError: function()   { ok(false, 'error find updated person model' ); start(); },
-                    onFinish: function()  { ok(true,  'find updated person model finished' ); start(); }
+                    onError: function()   { ok(false, 'error find updated person model.' ); start(); },
+                    onFinish: function()  { ok(true,  'find updated person model finished.' ); testDel(); }
                 });
             },
-            onError: function()  { ok(false, 'error updating person model' ); start(); },
-            onFinish: function() { ok(true,  'update person model finished' ); }
+            onError: function()  { ok(false, 'error updating person model.' ); start(); },
+            onFinish: function() { ok(true,  'update person model finished.' ); }
+        });
+    };
+
+    var testDel = function () {
+
+        TEST.WebSql.del({
+            model: person,
+            onSuccess: function() {
+                ok(true,  'del person model succeeded.' );
+                TEST.WebSql.find({
+                    table: 'person',
+                    onSuccess: function(result) {
+                        ok(result.getCount() === 0, 'record has been deleted.');
+                    },
+                    onError: function()   { ok(false, 'error find updated person model.' ); start(); },
+                    onFinish: function()  { ok(true,  'find updated person model finished.' ); start(); }
+                });
+            },
+            onError: function()  { ok(false, 'error deleting person model.' ); start(); },
+            onFinish: function() { ok(true,  'del person model finished.' ); }
         });
     };
 
@@ -182,15 +202,15 @@ asyncTest('M.WebSqlConnector with collection', function () {
 
         ok(M.Collection.getObjectType() === result.getObjectType(), 'The response is a M.Collection.');
 
-        ok(result.getCount() === 3, 'The response holds 3 records.');
+        ok(result.getCount() === 2, 'The response holds 3 records.');
 
         // get second person record
-        var data = result.getAt(1);
+        var data = result.getAt(0);
 
         ok(data.sureName === 'Stierle', 'Field "sureName" of second record has correct value.');
 
         // get second person record
-        var data = result.getAt(2);
+        var data = result.getAt(1);
 
         ok(data.sureName === 'Werler', 'Field "sureName" of third record has correct value.');
     };

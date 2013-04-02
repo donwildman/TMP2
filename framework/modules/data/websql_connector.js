@@ -1,3 +1,14 @@
+// ==========================================================================
+// Project:   The M-Project - Mobile HTML5 Application Framework
+// Copyright: (c) 2013 M-Way Solutions GmbH. All rights reserved.
+//            (c) 2013 panacoda GmbH. All rights reserved.
+// Creator:   Frank
+// Date:      02.04.2013
+// License:   Dual licensed under the MIT or GPL Version 2 licenses.
+//            http://github.com/mwaylabs/The-M-Project/blob/master/MIT-LICENSE
+//            http://github.com/mwaylabs/The-M-Project/blob/master/GPL-LICENSE
+// ==========================================================================
+
 M.WebSqlConnector = M.DataConnector.extend({
 
     _type: 'M.WebSqlConnector',
@@ -261,7 +272,7 @@ M.WebSqlConnector = M.DataConnector.extend({
             var sqlTemplate = "INSERT OR REPLACE INTO '" + table.name + "' (";
             for( var i = 0; i < data.length; i++ ) {
                 var statement = ''; // the actual sql insert string with values
-                var value = this.fromRecord(data[i], this.getFields(table));
+                var value = this.fromRecord(data[i], table);
                 var args  = _.values(value);
                 var keys  = _.keys  (value);
                 if (args.length > 0) {
@@ -284,8 +295,9 @@ M.WebSqlConnector = M.DataConnector.extend({
         if (this._checkDb(obj) && this._checkTable(obj, table)) {
             var stm = this.buildSqlSelect(obj, table);
 
-            var result = this.getCollection(table);
             var that   = this;
+            var result = this.getCollection(table);
+            result.clear();
             this.db.readTransaction(function( t ) {
                 var statement = stm.statement || stm;
                 var arguments = stm.arguments;
@@ -295,7 +307,7 @@ M.WebSqlConnector = M.DataConnector.extend({
                     var len = res.rows.length;//, i;
                     for( var i = 0; i < len; i++ ) {
                         var item = res.rows.item(i);
-                        result.add(that.toRecord(item, that.getFields(table)));
+                        result.add(that.toRecord(item, table));
                     }
                 }, function() {
                     // M.Logger.log('Incorrect statement: ' + sql, M.ERR)
@@ -311,88 +323,18 @@ M.WebSqlConnector = M.DataConnector.extend({
         }
     },
 
-
-    /**
-     * Prepares delete query for a model record. Operation itself is performed by {@link M.WebSqlProvider#performOp}.
-     * Tuple is identified by ID (not the internal model id, but the ID provided by the DB in record).
-     *
-     * @param {Object} obj The param obj, includes:
-     * * onSuccess callback
-     * * onError callback
-     * * the model
-     */
-/*    delete: function( obj ) {
-
-        if( !this.db ) {
-            return;
-        }
-
-        // reset flag
-        this._transactionFailed = NO;
+    delete: function( obj ) {
 
         var table = this.getTable(obj);
-        // if no data were passed execute error callback and pass it an error object
-        if( !table ) {
-            var err = this.buildError({
-                code: 11,
-                message: 'No valid table passed.'
-            });
-            return this.handleCallback(obj.onError, err);
+
+        if (this._checkDb(obj) && this._checkTable(obj, table)) {
+            var sql = this.buildSqlDelete(obj, table);
+            // reset flag
+            this._transactionFailed = NO;
+            this.executeTransaction(obj, [sql]);
         }
-
-        var transaction = [];
-
-        var sqlTemplate = 'DELETE FROM ' + obj.table;
-
-        var where = obj.where || '';
-
-        // build where out of records
-        if( !where && $.isArray(obj.data) || typeof obj.data === 'object' ) {
-            var records = $.isArray(obj.data) ? obj.data : [obj.data];
-            var curRec = null;
-            var keys = obj.key ? this.getKeys(obj) : this.getKeys(table);
-            if( keys.length === 1 ) {
-                var ids = '';
-                for( var i = 1; i <= records.length; i++ ) {
-                    curRec = records[i - 1];
-                    var column = this.getField(table, keys[0]);
-                    if( column ) {
-                        var value = curRec[keys[0]];
-                        if( typeof value !== 'undefined' ) {
-                            ids += (ids ? ', ' : '') + this.buildValue(column, value);
-                        }
-                    }
-                }
-                if( ids ) {
-                    where += keys[0] + ' IN (' + ids + ')';
-                }
-            } else {
-                var ids = '';
-                for( var i = 1; i <= records.length; i++ ) {
-                    curRec = records[i - 1];
-                    var id = '';
-                    for( var k = 0; k < keys.length; k++ ) {
-                        var column = this.getField(table, keys[k]);
-                        if( column ) {
-                            var value = curRec[keys[k]];
-                            value = (typeof value !== 'undefined') ? this.buildValue(column, value) : "NULL";
-                            id += (id ? ' AND ' : '') + keys[k] + '=' + value;
-                        }
-                    }
-                    ids += (ids ? ' OR ' : '') + id;
-                }
-                if( ids ) {
-                    where += ids;
-                }
-            }
-        }
-
-        var sql = sqlTemplate + (where ? ' WHERE ' + where : '');
-        sql += obj.and ? ' AND ' + obj.and : '';
-        transaction.push(sql);
-        this.makeBulkTransaction(obj, transaction);
     },
-*/
+
 /*
     buildValue: function( column, value ) {
         if( column.type === 'String' || column.type === 'Text' || column.type === 'Date' ) {
@@ -443,6 +385,60 @@ M.WebSqlConnector = M.DataConnector.extend({
     ///////////////////////////
     // Helpers, for building SQL syntax
     // SQL Builders
+
+    buildSqlDelete: function(obj, table) {
+
+        var sql = "DELETE FROM '" + table.name + "'";
+
+        var where = obj.where || '';
+/*
+        // build where out of records
+        if( !where && _.isArray(data) || _.isObject(data) ) {
+            var records = _.isArray(obj.data) ? obj.data : [obj.data];
+            var curRec = null;
+            var keys = obj.key ? this.getKeys(obj) : this.getKeys(table);
+            if( keys.length === 1 ) {
+                var ids = '';
+                for( var i = 1; i <= records.length; i++ ) {
+                    curRec = records[i - 1];
+                    var column = this.getField(table, keys[0]);
+                    if( column ) {
+                        var value = curRec[keys[0]];
+                        if( typeof value !== 'undefined' ) {
+                            ids += (ids ? ', ' : '') + this.buildValue(column, value);
+                        }
+                    }
+                }
+                if( ids ) {
+                    where += keys[0] + ' IN (' + ids + ')';
+                }
+            } else {
+                var ids = '';
+                for( var i = 1; i <= records.length; i++ ) {
+                    curRec = records[i - 1];
+                    var id = '';
+                    for( var k = 0; k < keys.length; k++ ) {
+                        var column = this.getField(table, keys[k]);
+                        if( column ) {
+                            var value = curRec[keys[k]];
+                            value = (typeof value !== 'undefined') ? this.buildValue(column, value) : "NULL";
+                            id += (id ? ' AND ' : '') + keys[k] + '=' + value;
+                        }
+                    }
+                    ids += (ids ? ' OR ' : '') + id;
+                }
+                if( ids ) {
+                    where += ids;
+                }
+            }
+        }
+*/
+        sql += where   ? ' WHERE ' + where : '';
+        sql += obj.and ? ' AND ' + obj.and : '';
+
+        return sql;
+    },
+
     buildSqlSelect: function(obj, table) {
 
         var sql = 'SELECT ';
