@@ -1,3 +1,14 @@
+// ==========================================================================
+// Project:   The M-Project - Mobile HTML5 Application Framework
+// Copyright: (c) 2013 M-Way Solutions GmbH. All rights reserved.
+//            (c) 2013 panacoda GmbH. All rights reserved.
+// Creator:   Frank
+// Date:      02.04.2013
+// License:   Dual licensed under the MIT or GPL Version 2 licenses.
+//            http://github.com/mwaylabs/The-M-Project/blob/master/MIT-LICENSE
+//            http://github.com/mwaylabs/The-M-Project/blob/master/GPL-LICENSE
+// ==========================================================================
+
 M.DataConnector = M.Object.extend({
 
     _type: 'M.DataConnector',
@@ -45,7 +56,7 @@ M.DataConnector = M.Object.extend({
         if (obj.name) {
             table  = { name: obj.name, model: obj.model, fields: {} };
             if (obj.model) {
-                _.extend(table.fields, obj.model.getFields());
+                this._mergeFields(table.fields, obj.model.getFields());
             }
             if (obj.fields) {
                 this._mergeFields(table.fields, obj.fields);
@@ -126,6 +137,19 @@ M.DataConnector = M.Object.extend({
         return table ? table.fields : {};
     },
 
+    getRecordFields: function(table) {
+        return table.model ? table.model.getFields() : table.fields;
+    },
+
+    getRecordField: function(table, key) {
+        var field;
+        var fields = this.getRecordFields(table);
+        if (fields && key) {
+            field = fields[key];
+        }
+        return field;
+    },
+
     getField: function(table, name) {
         var field;
         var table = table.fields ? table : this.getTable(table);
@@ -138,7 +162,7 @@ M.DataConnector = M.Object.extend({
     getData: function(obj) {
         var data;
         if (obj.data) {
-            data = obj.data;
+            data = typeof obj.data.getData === 'function' ? obj.data.getData() : obj.data;
         } else if (obj.model) {
             data = obj.model.getRecord();
         }
@@ -205,11 +229,13 @@ M.DataConnector = M.Object.extend({
         return value;
     },
 
-    toRecord: function(data, fields) {
+    toRecord: function(data, table) {
+        var fields = this.getFields(table);
         var record = {};
         var that = this;
-        _.each(fields, function(field, key) {
-            var value = that.toRecordValue(data[field.name], field);
+        _.each(fields, function(srcField, key) {
+            var dstField = that.getRecordField(table, key);
+            var value = that.toRecordValue(data[srcField.name], dstField);
             if( typeof(value) !== 'undefined' ) {
                 record[key] = value;
             }
@@ -217,7 +243,8 @@ M.DataConnector = M.Object.extend({
         return record;
     },
 
-    fromRecord: function(record, fields) {
+    fromRecord: function(record, table) {
+        var fields = this.getFields(table);
         var data = {};
         var that = this;
         _.each(fields, function(field, key) {
@@ -248,7 +275,7 @@ M.DataConnector = M.Object.extend({
             var records    = M.Collection.create();
             var count      = collection.getCount();
             for (var i=0; i<count; i++) {
-                records.add(this.toRecord(collection.getAt(i), this.getFields(table)));
+                records.add(this.toRecord(collection.getAt(i), table));
             }
             this.handleCallback(obj.onSuccess, records);
             this.handleCallback(obj.onFinish,  records);
@@ -268,7 +295,7 @@ M.DataConnector = M.Object.extend({
 
         var collection = this.getCollection(table);
         if (this._checkTable(obj, table) && this._checkData(obj, data)) {
-            collection.add(this.fromRecord(data, this.getFields(table)));
+            collection.add(this.fromRecord(data, table));
         }
 
         this.handleCallback(obj.onSuccess);
