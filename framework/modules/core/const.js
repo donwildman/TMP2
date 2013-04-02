@@ -213,7 +213,15 @@ M.CONST = {
          *
          * @type Number
          */
-        WEBSQL_PROVIDER_NO_DBHANDLER: 208,
+        WEBSQL_NO_DBHANDLER: 208,
+
+        /**
+         * A constant value for an error occuring with bulkSave operation in dataprovider.
+         * The browser doe not support web sql databases.
+         *
+         * @type Number
+         */
+        WEBSQL_NOT_SUPPORTED: 209,
 
         /**
          * A constant value for an error occuring with bulkSave operation in dataprovider.

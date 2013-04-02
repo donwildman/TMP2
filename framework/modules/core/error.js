@@ -70,5 +70,15 @@ M.Error = M.Object.extend(
 /** @scope M.Error.prototype */ {
     code: '',
     msg: '',
-    errObj: null
+    errObj: null,
+
+    create: function(code, msg, errObj) {
+        var error = this.extend({
+            code:   code,
+            msg:    msg,
+            errObj: errObj
+        });
+        return error;
+    }
+
 });

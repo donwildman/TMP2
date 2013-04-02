@@ -9,9 +9,10 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     _type: 'M.Model',
 
     _name: '',
+    _key:  '',
     _data: null,
     _fields: null,
-    _dataProvider: null,
+    _connector: null,
 
     create: function(obj) {
         var model = this.extend({
@@ -27,6 +28,7 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
 
         if (obj.config) {
             model._name = obj.config.name;
+            model._key  = obj.config.key;
 
             _.each(obj.config.fields, function(def, name) {
                 model._fields[name] = def;
@@ -55,7 +57,11 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     get: function(propName) {
-        return this._data[propName];
+        var value = this._data[propName];
+        if (typeof value === 'undefined' && this._fields[propName]) {
+            return this._fields[propName].default;
+        }
+        return value;
     },
 
     set: function(propName, value) {
@@ -63,9 +69,18 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     /**
+     * Returns the key of the model
+     *
+     * @returns {String} _key the key of the model
+     */
+    getKey: function() {
+        return this._key;
+    },
+
+    /**
      * Returns the name of the model
      *
-     * @returns {String} _name The name of the model
+     * @returns {String} _name the name of the model
      */
     getName: function() {
         return this._name;
