@@ -52,24 +52,12 @@ asyncTest('M.DataConnector', function () {
 
         ok(typeof result === 'object', 'Find has a response object.');
 
-        ok(M.Collection.getObjectType() === result.getObjectType(), 'The response is a M.Collection.');
+        ok(M.Collection.isPrototypeOf(result), 'The response is a M.Collection.');
 
         ok(result.getCount() === 1, 'The response holds one record.');
 
         // get first person record
-        var data = result.getAt(0);
-
-        ok(data.sureName === 'M-Project', 'Field "sureName" has correct value.');
-
-        ok(data.bmi === 27.8, 'Field "bmi" has correct value.');
-
-        ok(data.notes === 'Best HTML5 framework ever!', 'Field "note" has correct value.');
-
-        ok(data.id === 1, 'Field "id" has correct value.');
-
-        ok(data.address.street === 'Leitzstraße', 'Field "address" has correct value.');
-
-        var p = TEST.Person.createRecord(data);
+        var p = result.getAt(0);
 
         ok(p.get('sureName') === 'M-Project', 'Field "sureName" has correct value.');
 
@@ -92,7 +80,7 @@ asyncTest('M.DataConnector', function () {
     };
 
     TEST.Data.save({
-        model: person,
+        data: person,
         onSuccess: function() { ok(true,  'save person model succeeded' ); },
         onError: function()   { ok(false, 'error saving person model' ); start(); },
         onFinish: function()  { ok(true,  'save person model finished' ); testFind(); }

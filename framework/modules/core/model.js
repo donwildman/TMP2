@@ -8,6 +8,9 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
      */
     _type: 'M.Model',
 
+    deleteUnknownFields: YES,
+
+    _id:   '',
     _name: '',
     _key:  '',
     _data: null,
@@ -29,10 +32,7 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
         if (obj.config) {
             model._name = obj.config.name;
             model._key  = obj.config.key;
-
-            _.each(obj.config.fields, function(def, name) {
-                model._fields[name] = def;
-            });
+            model._setFields(obj.config.fields);
         }
 
         return model;
@@ -43,15 +43,7 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
         var rec = this.extend();
 
         /* add data to the record property */
-        rec._setRecord(obj);
-
-
-        _.each(this.getRecord(), function(rec, name) {
-            if(!_.has(this.getFields(), name)) {
-                that._deleteFromRecord(name);
-                console.warn('Deleting "' + name + '" property. It\'s not part of ' + that.name + ' definition.');
-            }
-        });
+        rec.setData(obj);
 
         return rec;
     },
@@ -78,6 +70,37 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     /**
+     * Returns an array of keys of the model
+     *
+     * @returns {String} _key the key of the model
+     */
+    getKeys: function() {
+         var keys = [];
+         if( _.isString(this._key) ) {
+             _.each(this._key.split(","), function(key) {
+                 key = key.trim();
+                 if( key ) {
+                     keys.push(key);
+                 }
+             });
+         }
+         return keys;
+    },
+
+    /**
+     * Returns the key of the model
+     *
+     * @returns {String} _key the key of the model
+     */
+    getId: function() {
+        return this._id;
+    },
+
+    setId: function(id) {
+        this._id = id;
+    },
+
+    /**
      * Returns the name of the model
      *
      * @returns {String} _name the name of the model
@@ -100,19 +123,48 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
      *
      * @returns {Object} _data The data object of a model record
      */
-    getRecord: function() {
+    getData: function() {
         return this._data;
     },
 
+    setData: function(data) {
+        var that   = this;
+        var fields = this.getFields();
+        var val    = {};
+        _.each(data, function(rec, name) {
+            if (_.has(fields, name )) {
+                val[name] = fields[name].transform(data[name]);
+            } else {
+                console.warn('Deleting "' + name + '" property. It\'s not part of ' + that.name + ' definition.');
+            }
+        });
+        this._data = val;
+        this._id   = this._buildId(val) || this._id || this.getUniqueId();
+    },
+
+    getUniqueId: function() {
+         return M.UniqueId.uuid();
+    },
+
+    _buildId: function(data) {
+        var ids = [];
+        _.each(this.getKeys(), function(key) {
+            if (!_.isUndefined(data[key])) {
+                ids.push(data[key].toString());
+            }
+        });
+        return ids.join('_');
+    },
+
     _setFields: function(fieldsDefinition) {
-        this._fields = fieldsDefinition;
+        var that = this;
+        _.each(fieldsDefinition, function(def, name) {
+            def.name = name;
+            that._fields[name] = M.DataField.extend(def);
+        });
     },
 
-    _setRecord: function(rec) {
-        this._data = rec;
-    },
-
-    _deleteFromRecord: function(propName) {
+    _deleteFromData: function(propName) {
         delete this._data[propName];
     }
 });

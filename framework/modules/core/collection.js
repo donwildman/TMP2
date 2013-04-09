@@ -13,43 +13,115 @@ M.Collection = M.Object.extend({
 
     _type: 'M.Collection',
 
-    _data:   null,
+    _model: null,
+    
+    _records: null,
 
-    create: function(data) {
+    create: function(model) {
 
         var collection = this.extend({
-            _data:   []
+            _model: model,
+            _records: []            
         });
-
-        collection.add(data);
-
         return collection;
     },
 
-    add: function(data) {
-        if ( M.Model.isPrototypeOf(data)){
-            this._data.push(data.getRecord());
-        } else if (_.isArray(data)) {
-            this._data = this._data.concat(data);
-        } else if (_.isObject(data)) {
-            this._data.push(data);
+    add: function(record) {
+        if ( M.Model.isPrototypeOf(record)) {
+            this._records.push(record);
+        } else if ( _.isObject(record) && this._model) {
+            this._records.push(this._model.createRecord(record));
+        }
+    },
+
+    indexOf: function(item) {
+        var id = M.Model.isPrototypeOf(item) ? item.getId() : item;
+        return _.indexOf(this._records, function(model) {
+             return model.getId() == id;
+        });
+    },
+
+    remove: function(item) {
+        var id = M.Model.isPrototypeOf(item) ? item.getId() : item;
+        this._records = _.reject(this._records, function(record) {
+             return record.getId() == id;
+        });
+    },
+
+    changeKey: function(oldKey, newKey) {
+        var record = this.get(oldKey);
+        if (record) {
+            record.setId(newKey);
+        }
+    },
+
+    getAt: function(index) {
+        return this._records[index];
+    },
+
+    get: function(item) {
+        var id = M.Model.isPrototypeOf(item) ? item.getId() : item;
+        return _.find(this._records, function(record) {
+             return record.getId() == id;
+        });
+    },
+
+    set: function(record) {
+        var index = this.indexOf(record);
+        if (index >= 0) {
+            this._records[index] = record;
+        } else {
+            this._records.push(record);
+        }
+    },
+
+    find: function(obj) {
+        if (obj && (obj.id || obj.where)) {
+            var collect = M.Collection.create(this._model);
+            var records = records || this._records;
+            _.each(records, function(record) {
+                if (!id || record.getId() === id) {
+                    if (!where || that.matches(record.getData(), where)) {
+                        collect.add(record);
+                    }
+                }
+            });
+            return collect;
+        } else {
+            return this;
         }
     },
 
     clear: function() {
-        this._data = [];
+        this._records = [];
     },
 
     getCount: function() {
-        return this._data ? this._data.length : 0;
+        return this._records.length;
     },
 
-    getAt: function(index) {
-        return this._data[index];
+    getRecords: function() {
+        return this._records;
     },
 
-    getData: function() {
-        return this._data;
+    getData: function(records, id, where) {
+        records = records || this._records;
+        var data = [];
+        _.each(records, function(record) {
+            if (!id || record.getId() === id) {
+                var rec = record.getData();
+                if (!where || that.matches(rec, where)) {
+                    data.push(rec);
+                }
+            }
+        });
+        return data;
+    },
+
+    matches: function(where) {
+        return _.every(r, function(val, key) {
+            return val === where[key];
+        });
     }
 
 });

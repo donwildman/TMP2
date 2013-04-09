@@ -19,10 +19,13 @@
 M.Date = M.Object.extend(
 /** @scope M.Date.prototype */ {
 
-    create: function(p1, p2, p3) {
-        var momt = moment(p1, p2, p3);
-        var date = this.extend(momt);
+    create: function() {
+        var date = this.extend(moment.apply(this, arguments));
         return date;
+    },
+
+    toString: function() {
+        return this.toJSON();
     }
 
 });

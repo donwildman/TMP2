@@ -6,6 +6,7 @@
 	<!-- import qunit -->
 	<link rel="stylesheet" href="libs/qunit-1.10.0.css">
 	<script src="libs/qunit-1.10.0.js"></script>
+    <script type='text/javascript' src='https://cdn.firebase.com/v0/firebase.js'></script>
 
     <script src="../modules/underscore/underscore-min.js"></script>
     <script src="../modules/moment/moment.js"></script>
@@ -16,11 +17,14 @@
     <script src="../modules/core/exception.js"></script>
     <script src="../modules/core/logger.js"></script>
     <script src="../modules/core/error.js"></script>
-    <script src="../modules/core/date.js"></script>
+    <script src="../modules/core/field.js"></script>
     <script src="../modules/core/model.js"></script>
     <script src="../modules/core/collection.js"></script>
+    <script src="../modules/utility/date.js"></script>
+    <script src="../modules/utility/uuid.js"></script>
     <script src="../modules/data/data_connector.js"></script>
     <script src="../modules/data/websql_connector.js"></script>
+    <script src="../modules/data/firebase_connector.js"></script>
 
 <!-- EDITABLE CONTENT START -->
 
@@ -33,8 +37,9 @@
     <script>module("data");</script>
         <script src="data/data_test.js"></script>
    	    <script src="data/websql_test.js"></script>
+        <script src="data/firebase_test.js"></script>
 
-<!-- EDITABLE CONTENT STOP -->
+    <!-- EDITABLE CONTENT STOP -->
 </head>
 <body>
 	<div id="qunit"></div>

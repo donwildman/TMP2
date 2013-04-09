@@ -17,6 +17,11 @@ M.DataConnector = M.Object.extend({
 
     config: null,
 
+    typeMap: {
+        'object':  'text',
+        'date':    'string'
+    },
+
     create: function(obj) {
         var connector = this.extend(obj);
         connector.configure(obj.config);
@@ -59,7 +64,15 @@ M.DataConnector = M.Object.extend({
                 this._mergeFields(table.fields, obj.model.getFields());
             }
             if (obj.fields) {
+                var fields = {};
+                _.each(obj.fields, function(def, name) {
+                    fields[name] = M.DataField.extend(def);
+                });
                 this._mergeFields(table.fields, obj.fields);
+            }
+            if (!obj.model) {
+                // create dynamic model
+                table.model = M.Model.extend({ config: { name: name, id: table.id, fields: table.fields } } );
             }
             this._updateFields(table.fields);
             table.key = obj.key;
@@ -80,13 +93,20 @@ M.DataConnector = M.Object.extend({
     },
 
     _updateFields: function(fields) {
+        var that = this;
         _.each(fields, function(value, key) {
             if (value.persistent === NO) {
                 delete fields[key];
             }
-            // add missing names
-            else if (!value.name) {
-                value.name = key;
+            else {
+                // add missing names
+                if (!value.name) {
+                    value.name = key;
+                }
+                // apply default type conversions
+                if (that.typeMap[value.type]) {
+                    value.type = that.typeMap[value.type];
+                }
             }
         });
     },
@@ -103,9 +123,10 @@ M.DataConnector = M.Object.extend({
         var table = null;
         if (obj.table) {
             table = this._tables[obj.table];
-        } else if (obj.model) {
+        } else if (obj.data && _.isFunction(obj.data.getName)) {
+            var name = obj.data.getName();
             table = _.find(this._tables, function(t) {
-                return t.model ? obj.model.getName() === t.model.getName() : t.name === obj.model.getName();
+                return t.model ? name === t.model.getName() : name === t.name;
             });
         }
         return table;
@@ -137,118 +158,81 @@ M.DataConnector = M.Object.extend({
         return table ? table.fields : {};
     },
 
-    getRecordFields: function(table) {
-        return table.model ? table.model.getFields() : table.fields;
-    },
-
-    getRecordField: function(table, key) {
-        var field;
-        var fields = this.getRecordFields(table);
-        if (fields && key) {
-            field = fields[key];
-        }
-        return field;
+    getModel: function(table) {
+        return table ? table.model : null;
     },
 
     getField: function(table, name) {
-        var field;
-        var table = table.fields ? table : this.getTable(table);
-        if (table && table.fields && name) {
-            field = table.fields[name];
-        }
-        return field;
+        return this.getFields(table)[name];
     },
 
     getData: function(obj) {
-        var data;
-        if (obj.data) {
-            data = typeof obj.data.getData === 'function' ? obj.data.getData() : obj.data;
-        } else if (obj.model) {
-            data = obj.model.getRecord();
+        if (obj && obj.data) {
+            return _.isFunction(obj.data.getData) ? obj.data.getData() : obj.data;
+        } else if (obj && _.isFunction(obj.getData)) {
+            return obj.getData();
         }
-        return data;
+    },
+
+    getRecords: function(obj) {
+        var records = [];
+        var data  = obj && obj.data ? obj.data : null;
+        var table = this.getTable(obj);
+        var model = this.getModel(table);
+        if ( _.isObject(data)) {
+            data = _.isArray(data) ? data : [ data ];
+            _.each(data, function(rec) {
+                if (M.Model.isPrototypeOf(rec)) {
+                    records.push(rec);
+                } else if (model && _.isObject(data)) {
+                    records.push(model.createRecord(rec));
+                }
+            });
+        }
+        return records;
     },
 
     getCollection: function(table) {
-        if ( _.isObject(table) ) {
+        var model = this.getModel(table);
+        if (model) {
             // if table is given, we cache the data
             if (!table.collection) {
-                table.collection = M.Collection.create();
+                table.collection = M.Collection.create(model);
             }
             return table.collection;
-        } else {
-            return M.Collection.create();
         }
     },
 
-    clear: function() {
-        _.each(this.getTables(), function(table) {
+    clear: function(table) {
+        if (table) {
             delete table.collection;
-        });
-    },
-
-    fromRecordValue: function(value, field) {
-        if (field) {
-            var type = typeof value;
-            if (type === 'undefined') {
-              return field.default;
-            } if( field.type === M.CONST.TYPE.STRING || field.type === M.CONST.TYPE.TEXT) {
-                return ""+value;
-            } else if( field.type === M.CONST.TYPE.INTEGER) {
-                return parseInt(value);
-            } else if( field.type === M.CONST.TYPE.BOOLEAN) {
-                return value == true || value === 'true'; // true, 1, "1" or "true"
-            } else if( field.type === M.CONST.TYPE.FLOAT) {
-                return parseFloat(value);
-            } else if( field.type === M.CONST.TYPE.OBJECT || field.type === M.CONST.TYPE.DATE) {
-                try {
-                    return value ? JSON.stringify(value) : '';
-                } catch(e) {
-                    M.Logger.error(e.message);
-                    return;
-                }
-            }
+        } else {
+            _.each(this.getTables(), function(table) {
+                delete table.collection;
+            });
         }
-        return value;
     },
 
-    toRecordValue: function(value, field) {
-        if (field) {
-            var type = typeof value;
-            if (type === 'undefined') {
-              return field.default;
-            } else if( field.type === M.CONST.TYPE.OBJECT) {
-                return type === 'string' ? JSON.parse(value) : null;
-            } else if (field.type === M.CONST.TYPE.DATE) {
-                var date = value ? M.Date.create(value) : null;
-                return date && date.isValid() ? date : null;
-            } else {
-                return this.fromRecordValue(value, field);
-            }
+    createRecord: function(data, table) {
+        var model  = this.getModel(table);
+        if (model) {
+            // map field names
+            var record = {};
+            var fields = this.getFields(table);
+            _.each(fields, function(field, key) {
+                record[key] = data[field.name];
+            });
+            return model.createRecord(record);
         }
-        return value;
-    },
-
-    toRecord: function(data, table) {
-        var fields = this.getFields(table);
-        var record = {};
-        var that = this;
-        _.each(fields, function(srcField, key) {
-            var dstField = that.getRecordField(table, key);
-            var value = that.toRecordValue(data[srcField.name], dstField);
-            if( typeof(value) !== 'undefined' ) {
-                record[key] = value;
-            }
-        });
-        return record;
     },
 
     fromRecord: function(record, table) {
+        var that = this;
         var fields = this.getFields(table);
         var data = {};
-        var that = this;
+        var rec  = _.isFunction(record.getData) ? record.getData() : record;
         _.each(fields, function(field, key) {
-            var value = that.fromRecordValue(record[key], field);
+            var value = field.transform(rec[key]);
             if( typeof(value) !== 'undefined' ) {
                 data[field.name] = value;
             }
@@ -272,11 +256,7 @@ M.DataConnector = M.Object.extend({
         if (this._checkTable(obj, table)) {
             // map internal collection to records
             var collection = this.getCollection(table);
-            var records    = M.Collection.create();
-            var count      = collection.getCount();
-            for (var i=0; i<count; i++) {
-                records.add(this.toRecord(collection.getAt(i), table));
-            }
+            var records    = collection.find(obj);
             this.handleCallback(obj.onSuccess, records);
             this.handleCallback(obj.onFinish,  records);
         }
@@ -288,18 +268,22 @@ M.DataConnector = M.Object.extend({
      * @return {*}
      */
     save: function(obj) {
-        // get data
-        var data  = this.getData(obj);
+
+        // get array
+        var array  = _.isArray(obj.data) ? obj.data : (_.isObject(obj.data) ? [ obj.data ] : null);
+
         // get table
         var table = this.getTable(obj);
 
-        var collection = this.getCollection(table);
-        if (this._checkTable(obj, table) && this._checkData(obj, data)) {
-            collection.add(this.fromRecord(data, table));
+        if (this._checkTable(obj, table) && this._checkData(obj, array)) {
+            var collection = this.getCollection(table);
+            _.each(array, function(item) {
+                record = M.Model.isPrototypeOf(item) ? item : that.createRecord(item);
+                collection.set(record);
+            });
+            this.handleCallback(obj.onSuccess);
+            this.handleCallback(obj.onFinish);
         }
-
-        this.handleCallback(obj.onSuccess);
-        this.handleCallback(obj.onFinish);
     },
 
     _checkTable: function(obj, table) {
@@ -313,7 +297,7 @@ M.DataConnector = M.Object.extend({
     },
 
     _checkData: function(obj, data) {
-        if(typeof data !== 'object' ) {
+        if( (!_.isArray(data) || data.length == 0) && !_.isObject(data) ) {
             var error = M.Error.create(M.CONST.ERROR.VALIDATION_PRESENCE, "No data passed.");
             this.handleCallback(obj.onError, error);
             this.handleCallback(obj.onFinish, error);

@@ -22,7 +22,7 @@ M.WebSqlConnector = M.DataConnector.extend({
         'date':    'varchar(255)',
         'boolean': 'boolean'
     },
-    
+
     _transactionFailed: false,
 
     _initialized: false,
@@ -65,7 +65,7 @@ M.WebSqlConnector = M.DataConnector.extend({
 
     save: function( obj ) {
         if( !this._initialized ) {
-            this._init(obj, this.save);
+            this._init(obj, this.insertOrReplace);
         } else {
             this.insertOrReplace(obj);
         }
@@ -73,7 +73,7 @@ M.WebSqlConnector = M.DataConnector.extend({
 
     del: function( obj ) {
         if( !this._initialized ) {
-            this._init(obj, this.delete());
+            this._init(obj, this.delete);
         } else {
             this.delete(obj);
         }
@@ -82,7 +82,7 @@ M.WebSqlConnector = M.DataConnector.extend({
     drop: function( obj ) {
 
         if( !this._initialized ) {
-            this._init(obj, this.drop);
+            this._init(obj, this.dropTable);
         } else {
             this.dropTable(obj);
         }
@@ -258,8 +258,6 @@ M.WebSqlConnector = M.DataConnector.extend({
      */
     insertOrReplace: function( obj ) {
 
-        var that = this;
-
         // get data
         var data  = this.getData(obj);
         // get table
@@ -267,7 +265,7 @@ M.WebSqlConnector = M.DataConnector.extend({
 
         if (this._checkDb(obj) && this._checkTable(obj, table) && this._checkData(obj, data)) {
 
-            data  = _.isArray(data) ? data : [data];
+            data  = _.isArray(data) ? data : [ data ];
             var statements  = [];
             var sqlTemplate = "INSERT OR REPLACE INTO '" + table.name + "' (";
             for( var i = 0; i < data.length; i++ ) {
@@ -293,6 +291,7 @@ M.WebSqlConnector = M.DataConnector.extend({
         var table = this.getTable(obj);
 
         if (this._checkDb(obj) && this._checkTable(obj, table)) {
+            var lastStatement;
             var stm = this.buildSqlSelect(obj, table);
 
             var that   = this;
@@ -307,14 +306,14 @@ M.WebSqlConnector = M.DataConnector.extend({
                     var len = res.rows.length;//, i;
                     for( var i = 0; i < len; i++ ) {
                         var item = res.rows.item(i);
-                        result.add(that.toRecord(item, table));
+                        result.add(that.createRecord(item, table));
                     }
                 }, function() {
                     // M.Logger.log('Incorrect statement: ' + sql, M.ERR)
                 }) // callbacks: SQLStatementErrorCallback
             }, function( sqlError ) { // errorCallback
-                var err = that.buildError(sqlError);
-                that.handleCallback(obj.onError, err, sql);
+                var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, sqlError);
+                that.handleCallback(obj.onError, err, lastStatement);
                 that.handleCallback(obj.onFinish, err);
             }, function() { // voidCallback (success)
                 that.handleCallback(obj.onSuccess, result);
@@ -373,9 +372,9 @@ M.WebSqlConnector = M.DataConnector.extend({
 
     _checkData: function(obj, data) {
         /* if no data were passed execute error callback and pass it an error object */
-        if( !_.isArray(data) && typeof data !== 'object' ) {
+        if( (!_.isArray(data) || data.length == 0) && !_.isObject(data) ) {
             var error = M.Error.create(M.CONST.ERROR.WEBSQL_BULK_NO_RECORDS, "No data passed.");
-            this.handleCallback(obj.onError, error);
+            this.handleCallback(obj.onError,  error);
             this.handleCallback(obj.onFinish, error);
             return false;
         }
