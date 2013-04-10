@@ -20,6 +20,16 @@ M.CONST = {
     },
 
     /***
+     * Sorting orders:
+     * ASC: Ascending
+     * DESC: Descending
+     */
+    ORDER: {
+        ASC: 'ASC',
+        DESC: 'DESC'
+    },
+
+    /***
      * Error Constants.
      *
      * 0-99:    general errors
