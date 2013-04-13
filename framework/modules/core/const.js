@@ -16,7 +16,13 @@ M.CONST = {
 
         FLOAT:      "float",
 
-        OBJECT:     "object"
+        OBJECT:     "object",
+
+        ARRAY:      "array",
+
+        BINARY:     "binary",
+
+        NULL:       "null"
     },
 
     /***
