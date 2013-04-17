@@ -71,6 +71,14 @@ M.WebSqlConnector = M.DataConnector.extend({
         }
     },
 
+    update: function( obj ) {
+        if( !this._initialized ) {
+            this._init(obj, this.updateOrReplace);
+        } else {
+            this.updateOrReplace(obj);
+        }
+    },
+
     del: function( obj ) {
         if( !this._initialized ) {
             this._init(obj, this.delete);
@@ -93,6 +101,20 @@ M.WebSqlConnector = M.DataConnector.extend({
             this._init(obj, this.select);
         } else {
             this.select(obj);
+        }
+    },
+
+    execute: function(obj) {
+        if( !this._initialized ) {
+            this._init(obj, this.executeSql);
+        } else {
+            this.executeSql(obj);
+        }
+    },
+
+    executeSql: function(obj) {
+        if (obj.sql) {
+            this.executeTransaction(obj, [obj.sql]);
         }
     },
 
@@ -286,6 +308,35 @@ M.WebSqlConnector = M.DataConnector.extend({
         }
     },
 
+    updateOrReplace: function( obj ) {
+        // get data
+        var data  = this.getData(obj);
+        // get table
+        var table = this.getTable(obj);
+
+        if (this._checkDb(obj) && this._checkTable(obj, table) && this._checkData(obj, data)) {
+
+            data  = _.isArray(data) ? data : [ data ];
+            var where = buildWhere(obj);
+            var statements  = [];
+            var sqlTemplate = "UPDATE OR REPLACE '" + table.name + "' SET";
+            for( var i = 0; i < data.length; i++ ) {
+                var statement = ''; // the actual sql insert string with values
+                var value = this.fromRecord(data[i], table);
+                var args  = _.values(value);
+                var keys  = _.keys  (value);
+                if (args.length > 0) {
+                    var columns = "'" + keys.join("'=?,'") + "'=?";
+                    statement += sqlTemplate + columns + where + ';';
+                    statements.push( { statement: statement, arguments: args } );
+                }
+            }
+            // reset flag
+            this._transactionFailed = NO;
+            this.executeTransaction(obj, statements);
+        }
+    },
+
     select: function( obj ) {
 
         var table = this.getTable(obj);
@@ -310,7 +361,7 @@ M.WebSqlConnector = M.DataConnector.extend({
                     }
                 }, function() {
                     // M.Logger.log('Incorrect statement: ' + sql, M.ERR)
-                }) // callbacks: SQLStatementErrorCallback
+                }); // callbacks: SQLStatementErrorCallback
             }, function( sqlError ) { // errorCallback
                 var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, sqlError);
                 that.handleCallback(obj.onError, err, lastStatement);
@@ -438,6 +489,16 @@ M.WebSqlConnector = M.DataConnector.extend({
         return sql;
     },
 
+    buildSqlWhere: function(obj, table) {
+        var sql = '';
+        if( obj.where ) {
+            sql += ' WHERE ' + obj.where;
+        } else if (obj.query) {
+
+        }
+        return sql;
+    },
+
     buildSqlSelect: function(obj, table) {
 
         var sql = 'SELECT ';
@@ -460,9 +521,7 @@ M.WebSqlConnector = M.DataConnector.extend({
             sql += ' LEFT JOIN ' + obj.leftJoin;
         }
 
-        if( obj.where ) {
-            sql += ' WHERE ' + obj.where;
-        }
+        var where = this.buildSqlWhere(obj);
 
         if( obj.order ) {
             sql += ' ORDER BY ' + obj.order;

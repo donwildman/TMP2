@@ -39,7 +39,6 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     createRecord: function(obj) {
-        var that = this;
         var rec = this.extend();
 
         /* add data to the record property */
@@ -167,4 +166,5 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     _deleteFromData: function(propName) {
         delete this._data[propName];
     }
+
 });
