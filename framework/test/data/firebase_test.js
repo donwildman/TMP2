@@ -16,7 +16,7 @@ TEST.Person = M.Model.create({
     }
 });
 
-TEST.Firebase = M.FirebaseConnector.create({
+TEST.Firebase = M.DataConnectorFirebase.create({
     config: {
         name: 'https://mway.firebaseIO.com/test',
         tables: {

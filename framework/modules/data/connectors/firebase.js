@@ -9,9 +9,9 @@
 //            http://github.com/mwaylabs/The-M-Project/blob/master/GPL-LICENSE
 // ==========================================================================
 
-M.FirebaseConnector = M.DataConnector.extend({
+M.DataConnectorFirebase = M.DataConnector.extend({
 
-    _type: 'M.FirebaseConnector',
+    _type: 'M.DataConnectorFirebase',
 
     _initialized: false,
 

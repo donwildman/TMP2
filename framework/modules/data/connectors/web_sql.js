@@ -9,9 +9,9 @@
 //            http://github.com/mwaylabs/The-M-Project/blob/master/GPL-LICENSE
 // ==========================================================================
 
-M.WebSqlConnector = M.DataConnector.extend({
+M.DataConnectorWebSql = M.DataConnector.extend({
 
-    _type: 'M.WebSqlConnector',
+    _type: 'M.DataConnectorWebSql',
 
     _typeMapping: {
         'string':  'varchar(255)',
