@@ -1,3 +1,11 @@
+M.Event = M.Object.extend({
+
+    element: null,
+    callback: null,
+    eventType: null
+
+});
+
 M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
 
     /**
@@ -7,36 +15,47 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
      */
     type: 'M.EventDispatcher',
 
-    _internalEvents: ['click', 'DOMNodeInserted'],
+    _internalEvents: null,
 
     _bindings: null,
 
-    init: function(){
-        var that = this;
-
+    init: function() {
+        this._internalEvents = [M.CONST.EVENTS.CLICK, M.CONST.EVENTS.DOM_NODE_INSERTED];
         this._bindings = {};
-
-        $(document).on(this._internalEvents.join(' '), function(jEvt){
-            that._eventDidHappen(jEvt);
-        });
+        this._bindDocumentEvents();
 
     },
 
-    _eventDidHappen: function(jEvt){
+    _bindDocumentEvents: function() {
+        var that = this;
+        $(document).on(this._internalEvents.join(' '), function( jEvt ) {
+            that._eventDidHappen(jEvt);
+        });
+    },
 
-        if(this._checkEventBinding(jEvt)){
+    _eventDidHappen: function( jEvt ) {
+
+        if( this._checkEventBinding(jEvt) ) {
 
         }
     },
 
-    _checkEventBinding: function(jEvt){
+    _checkEventBinding: function( jEvt ) {
+        if( this._bindings[jEvt.type] && this._bindings[jEvt.type].length > 0 ) {
 
-
+            console.log(this._bindings[jEvt.type]);
+        }
     },
 
-    registerEvent: function(eventType){
+    registerEvents: function( events ) {
 
-
+        var that = this;
+        _.each(events, function( callback, eventType ) {
+            if( !that._bindings[eventType] ) {
+                that._bindings[eventType] = [];
+            }
+            that._bindings[eventType].push(callback);
+        });
     }
 
 });

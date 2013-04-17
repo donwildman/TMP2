@@ -182,8 +182,8 @@ M.Object = /** @scope M.Object.prototype */ {
         return Object.keys(this);
     },
 
-    on: function(event){
-
+    on: function(events){
+        M.EventDispatcher.registerEvents(events.events);
     }
 
 };

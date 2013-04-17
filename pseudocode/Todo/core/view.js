@@ -56,10 +56,14 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
 
     _bindInternalEvents: function(){
 
-        var that = this;
         this.on({
             events:{
-                appentodom: that._postRender
+                appentodom: function(){
+                    App.Controller.lala();
+                },
+                click: function(){
+                    console.log('clicked that view');
+                }
             }
         });
     },
