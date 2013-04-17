@@ -12,17 +12,21 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
 
     _id: null,
 
+    _isMView: YES,
+
     events: null,
 
     cssClass: '',
 
     design: function( obj ) {
         var view = this.extend(this._normalize(obj));
-        view._id = M.ViewManager.getNewId();
+        view._id = M.ViewManager.getNewId(view);
+
         return view;
     },
 
     init: function() {
+        this.callFromSuper('init');
     },
 
     render: function() {
@@ -55,15 +59,9 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     _bindInternalEvents: function(){
-
         this.on({
             events:{
-                appentodom: function(){
-                    App.Controller.lala();
-                },
-                click: function(){
-                    console.log('clicked that view');
-                }
+                click: this._postRender
             }
         });
     },
@@ -76,6 +74,8 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
 
     _normalize: function(obj){
         obj.events = obj.events || {};
+        obj._postRender = obj._postRender || this._postRender;
+
         return obj;
     },
 
@@ -85,6 +85,7 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     _postRender: function() {
+        console.log('I BIN DOOOOO');
 
         this.handleCallback(this.events.postRender);
     }

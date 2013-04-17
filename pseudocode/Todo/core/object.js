@@ -101,7 +101,8 @@ M.Object = /** @scope M.Object.prototype */ {
         var that = this;
        	_.each(Object.getOwnPropertyNames(this), function(key) {
        		if(typeof that[key] === 'function') {
-       			that[key] = new Function('return ' + that[key].toString().replace('function () {', 'function EINDEUTIGER_NAME() {'))();
+                var uniqueName = 'func_' + Math.ceil(Math.random() * 100000);
+       			that[key] = new Function('return ' + that[key].toString().replace('function () {', 'function ' + uniqueName + '() {'))();
        		}
        	});
     },

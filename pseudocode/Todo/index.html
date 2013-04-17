@@ -35,9 +35,9 @@
     M.Application.config = M.Config;
     Todo.start();
 
-    var v = M.View.design({cssClass: 'lol lol1', events:{preRender: function(){console.log('asd');this.cssClass;}}})
+    M.VV = M.View.design({cssClass: 'lol lol1', events:{preRender: function(){console.log('asd');this.cssClass;}}})
 
-    $('body').append(v.render());
+    $('body').append(M.VV.render());
 
 </script>
 

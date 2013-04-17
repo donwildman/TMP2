@@ -22,15 +22,31 @@ M.ViewManager = M.Object.extend({
      */
     idPrefix: 'm_',
 
+    _views: null,
+
     /**
      * Returns a unique Id build from nextId property incremented by 1 and the prefix.
      * The id is used as the value for the HTML attribute id.
      *
      * @returns {String} The next id for a view, e.g. 'm_123' (if last id was 'm_122').
      */
-    getNewId: function() {
+    getNewId: function(view) {
         this.nextId = this.nextId + 1;
-        return this.idPrefix + this.nextId;
+
+        var id = this.idPrefix + this.nextId;
+        this._views[id] = view;
+
+        return id;
+    },
+
+    init: function() {
+        this.callFromSuper('init');
+
+        this._views = {};
+    },
+
+    getViewById: function(id) {
+        return this._views[id];
     }
 
 });
