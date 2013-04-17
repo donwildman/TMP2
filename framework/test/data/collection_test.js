@@ -105,7 +105,7 @@ test('M.Collection', function() {
 
     var oldPerson1 = TEST.DeveloperCollection.getAt(0);
     var oldPerson2 = TEST.DeveloperCollection.getAt(1);
-    
+
     ok(TEST.DeveloperCollection.getCount() === 2, 'Filter correctly applied');
     ok(oldPerson1.get('firstName') === 'Frank' && oldPerson2.get('firstName') === 'Sebastian', 'Sorting correctly applied');
 
