@@ -1,3 +1,24 @@
+// ==========================================================================
+// Project:   The M-Project - Mobile HTML5 Application Framework
+// Copyright: (c) 2013 M-Way Solutions GmbH. All rights reserved.
+//            (c) 2013 panacoda GmbH. All rights reserved.
+// Creator:   Frank
+// Date:      14.04.2013
+// License:   Dual licensed under the MIT or GPL Version 2 licenses.
+//            http://github.com/mwaylabs/The-M-Project/blob/master/MIT-LICENSE
+//            http://github.com/mwaylabs/The-M-Project/blob/master/GPL-LICENSE
+// ==========================================================================
+
+// ===========================================================================
+//
+// M.DataSelector uses code from meteor.js
+// https://github.com/meteor/meteor/tree/master/packages/minimongo
+//
+// Thanks for sharing!
+//
+// ===========================================================================
+
+
 M.DataSelector = M.Object.extend({
 
     _type: 'M.Selector',
