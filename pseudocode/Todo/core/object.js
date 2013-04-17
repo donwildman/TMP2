@@ -180,6 +180,10 @@ M.Object = /** @scope M.Object.prototype */ {
      */
     keys: function() {
         return Object.keys(this);
+    },
+
+    on: function(event){
+
     }
 
 };

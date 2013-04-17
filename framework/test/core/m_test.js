@@ -1,3 +1,6 @@
+// test namespace
+TEST = {};
+
 test('M Namespace', function () {
     ok(M, 'M is defined.');
     ok(typeof M === 'object', 'M is an object.');
