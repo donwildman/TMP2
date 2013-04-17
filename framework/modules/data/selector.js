@@ -1,6 +1,6 @@
 M.DataSelector = M.Object.extend({
 
-    _type: 'M.Selector',
+    _type: 'M.DataSelector',
 
     _selector: null,
 

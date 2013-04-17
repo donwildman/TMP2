@@ -19,6 +19,8 @@ M.DataConnector = M.Object.extend({
 
     typeMap: {
         'object':  'text',
+        'array':   'text',
+        'binary':  'text',
         'date':    'string'
     },
 
