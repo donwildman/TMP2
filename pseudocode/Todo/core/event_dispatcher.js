@@ -34,14 +34,13 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
     },
 
     _eventDidHappen: function( jEvt ) {
-
         if( this._checkEventBinding(jEvt) ) {
 
             var event = this._bindings[jEvt.type][jEvt.target.attr('id')];
 
             /* TODO: get the "app" namespace */
             var caller = null;
-            _.each(window[M.Application.getConfig('appName')], function(obj) {
+            _.each(window[M.Application.getConfig('applicationName')], function(obj) {
                 if(typeof obj === 'object' && this._isMObject) {
                     _.each(obj, function(f) {
                         if(typeof f === 'function' && f.name === event.callback.name) {
@@ -57,9 +56,8 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
     },
 
     _checkEventBinding: function( jEvt ) {
-        if( this._bindings[jEvt.type] && this._bindings[jEvt.type].length > 0 ) {
-
-            console.log(this._bindings[jEvt.type]);
+        if( this._bindings[jEvt.type] ) {
+            return true;
         }
     },
 
