@@ -16,7 +16,7 @@ TEST.Person = M.Model.create({
     }
 });
 
-TEST.Firebase = M.FirebaseConnector.create({
+TEST.Firebase = M.DataConnectorFirebase.create({
     config: {
         name: 'https://mway.firebaseIO.com/test',
         tables: {
@@ -33,7 +33,7 @@ TEST.Firebase = M.FirebaseConnector.create({
     }
 });
 
-asyncTest('M.FirebaseConnector basics', function () {
+asyncTest('M.DataConnectorFirebase basics', function () {
 
     var person = TEST.Person.createRecord({
         id: 1,
@@ -154,7 +154,7 @@ asyncTest('M.FirebaseConnector basics', function () {
     testDrop();
 });
 
-asyncTest('M.FirebaseConnector with collection', function () {
+asyncTest('M.DataConnectorFirebase with collection', function () {
 
     var persons = [
         { id:23, sureName: 'Stierle' },
