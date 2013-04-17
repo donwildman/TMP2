@@ -96,7 +96,7 @@ M.Object = /** @scope M.Object.prototype */ {
         this._nameFunctions();
     },
 
-    _nameFunction: function() {
+    _nameFunctions: function() {
         /* TODO: EINDEUTIGER_NAME must be "real" EINDEUTIGER_NAME (uuid, etc...) */
         var that = this;
        	_.each(Object.getOwnPropertyNames(this), function(key) {
