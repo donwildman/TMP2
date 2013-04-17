@@ -16,6 +16,11 @@ M.Object = /** @scope M.Object.prototype */ {
     _lastThis: null,
 
     /**
+     * flag to determine that the object was initially built on M.Object
+     */
+    _isMObject: YES,
+
+    /**
      * Creates an object based on a passed prototype.
      *
      * @param {Object} proto The prototype of the new object.
@@ -88,7 +93,17 @@ M.Object = /** @scope M.Object.prototype */ {
      * This implementation in M.Object only serves as some kind of 'interface' declaration.
      */
     init: function() {
+        this._nameFunctions();
+    },
 
+    _nameFunction: function() {
+        /* TODO: EINDEUTIGER_NAME must be "real" EINDEUTIGER_NAME (uuid, etc...) */
+        var that = this;
+       	_.each(Object.getOwnPropertyNames(this), function(key) {
+       		if(typeof that[key] === 'function') {
+       			that[key] = new Function('return ' + that[key].toString().replace('function () {', 'function EINDEUTIGER_NAME() {'))();
+       		}
+       	});
     },
 
     /**
@@ -183,7 +198,7 @@ M.Object = /** @scope M.Object.prototype */ {
     },
 
     on: function(events){
-        M.EventDispatcher.registerEvents(events.events);
+        M.EventDispatcher.registerEvents(this, events.events);
     }
 
 };

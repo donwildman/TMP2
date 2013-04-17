@@ -1,6 +1,6 @@
 M.Event = M.Object.extend({
 
-    element: null,
+    source: null,
     callback: null,
     eventType: null
 
@@ -37,6 +37,22 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
 
         if( this._checkEventBinding(jEvt) ) {
 
+            var event = this._bindings[jEvt.type][jEvt.target.attr('id')];
+
+            /* TODO: get the "app" namespace */
+            var caller = null;
+            _.each(window[M.Application.getConfig('appName')], function(obj) {
+                if(typeof obj === 'object' && this._isMObject) {
+                    _.each(obj, function(f) {
+                        if(typeof f === 'function' && f.name === event.callback.name) {
+                            caller = obj;
+                        }
+                    })
+                }
+            });
+            if(caller) {
+                event.callback.apply(caller, []);
+            }
         }
     },
 
@@ -47,14 +63,20 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
         }
     },
 
-    registerEvents: function( events ) {
+    registerEvents: function( source, events ) {
 
         var that = this;
         _.each(events, function( callback, eventType ) {
             if( !that._bindings[eventType] ) {
-                that._bindings[eventType] = [];
+                that._bindings[eventType] = {};
             }
-            that._bindings[eventType].push(callback);
+            that._bindings[eventType][source.id] = that._bindings[eventType][source.id] || [];
+
+            that._bindings[eventType][source.id] = M.Event.extend({
+                source: source,
+                callback: callback,
+                eventType: eventType
+            });
         });
     }
 
