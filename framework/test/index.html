@@ -20,10 +20,10 @@
     <script src="../modules/data/field.js"></script>
     <script src="../modules/data/model.js"></script>
     <script src="../modules/data/collection.js"></script>
-    <script src="../modules/data/selector.js"></script>
-    <script src="../modules/data/data_connector.js"></script>
-    <script src="../modules/data/websql_connector.js"></script>
-    <script src="../modules/data/firebase_connector.js"></script>
+    <script src="../modules/data/data_selector.js"></script>
+    <script src="../modules/data/connectors/data_connector.js"></script>
+    <script src="../modules/data/connectors/web_sql.js"></script>
+    <script src="../modules/data/connectors/firebase.js"></script>
     <script src="../modules/utility/date.js"></script>
     <script src="../modules/utility/uuid.js"></script>
 
@@ -37,8 +37,8 @@
         <script src="core/model_test.js"></script>
         <script src="core/logger_test.js"></script>
 
-        <script src="data/collection_test.js"></script>
     <script>module("data");</script>
+        <script src="data/collection_test.js"></script>
         <script src="data/data_test.js"></script>
    	    <script src="data/websql_test.js"></script>
         <script src="data/firebase_test.js"></script>

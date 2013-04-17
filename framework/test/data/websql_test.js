@@ -16,7 +16,7 @@ TEST.Person = M.Model.create({
     }
 });
 
-TEST.WebSql = M.WebSqlConnector.create({
+TEST.WebSql = M.DataConnectorWebSql.create({
     config: {
         name: 'test',
         tables: {
@@ -35,7 +35,7 @@ TEST.WebSql = M.WebSqlConnector.create({
     }
 });
 
-asyncTest('M.WebSqlConnector basics', function () {
+asyncTest('M.DataConnectorWebSql basics', function () {
 
     var person = TEST.Person.createRecord({
         id: 1,
@@ -155,7 +155,7 @@ asyncTest('M.WebSqlConnector basics', function () {
     testDrop();
 });
 
-asyncTest('M.WebSqlConnector with collection', function () {
+asyncTest('M.DataConnectorWebSql with collection', function () {
 
     var persons = [
         { sureName: 'Stierle' },
