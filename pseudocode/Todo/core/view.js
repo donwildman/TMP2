@@ -26,7 +26,7 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     init: function() {
-        this.callFromSuper('init');
+        Object.getPrototypeOf(this).init();
     },
 
     render: function() {

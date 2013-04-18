@@ -35,7 +35,10 @@
     M.Application.config = M.Config;
     Todo.start();
 
-    M.VV = M.View.design({cssClass: 'lol lol1', events:{preRender: function(){console.log('asd');this.cssClass;}}})
+    M.LabelView = M.View.extend({
+        type: 'M.LabelView'
+    });
+    M.VV = M.LabelView.design({cssClass: 'lol lol1', events:{preRender: function(){console.log('asd');this.cssClass;}}})
 
     $('body').append(M.VV.render());
 
