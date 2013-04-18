@@ -26,7 +26,7 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     init: function() {
-        Object.getPrototypeOf(this).init();
+
     },
 
     render: function() {
@@ -86,7 +86,7 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
 
     _postRender: function() {
         console.log('I BIN DOOOOO');
-
+debugger;
         this.handleCallback(this.events.postRender);
     }
 
