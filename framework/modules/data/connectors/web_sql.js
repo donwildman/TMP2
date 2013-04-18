@@ -491,9 +491,9 @@ M.DataConnectorWebSql = M.DataConnector.extend({
 
     buildSqlWhere: function(obj, table) {
         var sql = '';
-        if( obj.where ) {
+        if( _.isString(obj.where) ) {
             sql += ' WHERE ' + obj.where;
-        } else if (obj.query) {
+        } else  if ( _.isObject(obj.where) ) {
 
         }
         return sql;

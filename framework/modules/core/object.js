@@ -183,7 +183,7 @@ M.Object = /** @scope M.Object.prototype */ {
     },
 
     /**
-     * Returns the type the object.
+     * Returns the type of the object.
      *
      * @return {String}
      */
