@@ -68,6 +68,8 @@ M.Object = /** @scope M.Object.prototype */ {
      * @param {Object} caller The scope of the method that should be bound.
      * @param {Function} method The method to be bound.
      * @param {Object} arg One or more arguments. If more, then apply is used instead of call.
+     *
+     * @return {Function}
      */
     bindToCaller: function( caller, method, arg ) {
         return function() {
