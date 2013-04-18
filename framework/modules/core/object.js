@@ -56,6 +56,7 @@ M.Object = /** @scope M.Object.prototype */ {
         obj.include(properties);
 
         /* call the new object's _init method to initialize it */
+        this.bindToCaller(obj, M.Object._init)();
         obj._init();
 
         /* return the new object */
