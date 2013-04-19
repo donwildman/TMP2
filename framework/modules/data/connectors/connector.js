@@ -259,14 +259,13 @@ M.DataConnector = M.Object.extend({
             // map internal collection to records
             var collection = this.getCollection(table);
             var records    = collection.find(obj);
-            this.handleCallback(obj.onSuccess, records);
-            this.handleCallback(obj.onFinish,  records);
+            this.handleSuccess(obj, records);
         }
     },
 
     /***
      *
-     * @param obj { data: array of model, onSuccess: success callback, onError: error callback, onFinish:   }
+     * @param obj { data: array of model, success: success callback, error: error callback, finish:   }
      * @return {*}
      */
     save: function(obj) {
@@ -283,16 +282,35 @@ M.DataConnector = M.Object.extend({
                 record = M.Model.isPrototypeOf(item) ? item : that.createRecord(item);
                 collection.set(record);
             });
-            this.handleCallback(obj.onSuccess);
-            this.handleCallback(obj.onFinish);
+            this.handleSuccess(obj);
+        }
+    },
+
+    handleSuccess: function(obj) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        if (obj.success) {
+            this.handleCallback.apply(this, [ obj.success ].concat(args));
+        }
+        if (obj.finish) {
+            this.handleCallback.apply(this, [ obj.finish ]. concat(args));
+        }
+    },
+
+    handleError: function(obj) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        if (obj.error) {
+            this.handleCallback.apply(this, [ obj.error ]. concat(args));
+        }
+        if (obj.finish) {
+            this.handleCallback.apply(this, [ obj.finish ].concat(args));
         }
     },
 
     _checkTable: function(obj, table) {
         if( !table ) {
             var error = M.Error.create(M.CONST.ERROR.VALIDATION_PRESENCE, "No valid table passed.");
-            this.handleCallback(obj.onError, error);
-            this.handleCallback(obj.onFinish, error);
+            this.handleCallback(obj.error, error);
+            this.handleCallback(obj.finish, error);
             return false;
         }
         return true;
@@ -301,8 +319,8 @@ M.DataConnector = M.Object.extend({
     _checkData: function(obj, data) {
         if( (!_.isArray(data) || data.length == 0) && !_.isObject(data) ) {
             var error = M.Error.create(M.CONST.ERROR.VALIDATION_PRESENCE, "No data passed.");
-            this.handleCallback(obj.onError, error);
-            this.handleCallback(obj.onFinish, error);
+            this.handleCallback(obj.error, error);
+            this.handleCallback(obj.finish, error);
             return false;
         }
         return true;

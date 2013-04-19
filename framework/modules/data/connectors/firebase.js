@@ -34,10 +34,10 @@ M.DataConnectorFirebase = M.DataConnector.extend({
         this._initialized = true;
 
         this.openDb({
-            onError: function( msg ) {
+            error: function( msg ) {
                 M.Logger.error(msg);
             },
-            onSuccess: function() {
+            success: function() {
                 that._callback(obj, callback);
             }
         });
@@ -84,10 +84,10 @@ M.DataConnectorFirebase = M.DataConnector.extend({
             }
         }
         if( this.db ) {
-            this.handleCallback(obj.onSuccess, this.db);
+            this.handleSuccess(obj, this.db);
         } else {
             error = error || M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, "failed opening database");
-            this.handleCallback(obj.onError, error);
+            this.handleError(obj, error);
         }
     },
 
@@ -109,11 +109,9 @@ M.DataConnectorFirebase = M.DataConnector.extend({
         var onComplete = function(error) {
             if (error) {
                 var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, 'Remove failed.');
-                that.handleCallback(obj.onError, err);
-                that.handleCallback(obj.onFinish, err);
+                that.handleError(obj, err);
             } else {
-                that.handleCallback(obj.onSuccess);
-                that.handleCallback(obj.onFinish);
+                that.handleSuccess(obj);
             }
         };
 
@@ -123,15 +121,12 @@ M.DataConnectorFirebase = M.DataConnector.extend({
                 dbTable.remove(onComplete);
             } catch(e) {
                 var err = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, e.message, e);
-                that.handleCallback(obj.onError, err);
-                that.handleCallback(obj.onFinish, err);
+                that.handleError(obj, err);
             }
         }
     },
 
     createTable: function( obj ) {
-
-        var that = this;
         // get table
         var table = this.getTable(obj);
 
@@ -140,13 +135,10 @@ M.DataConnectorFirebase = M.DataConnector.extend({
                 if (!table.ref) {
                     this._bindTable(table, this.db.child(table.name))
                 }
-
-                this.handleCallback(obj.onSuccess);
-                this.handleCallback(obj.onFinish);
+                this.handleSuccess(obj);
             } catch(e) {
                 var err = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, e.message, e);
-                that.handleCallback(obj.onError, err);
-                that.handleCallback(obj.onFinish, err);
+                this.handleError(obj, err);
             }
         }
     },
@@ -200,11 +192,9 @@ M.DataConnectorFirebase = M.DataConnector.extend({
             if (--count <= 0) {
                 if (error) {
                     var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, 'Update failed.');
-                    that.handleCallback(obj.onError, err);
-                    that.handleCallback(obj.onFinish, err);
+                    that.handleError(obj, err);
                 } else {
-                    that.handleCallback(obj.onSuccess);
-                    that.handleCallback(obj.onFinish);
+                    that.handleSuccess(obj);
                 }
             }
         };
@@ -221,8 +211,7 @@ M.DataConnectorFirebase = M.DataConnector.extend({
                     }
                 } catch(e) {
                     var err = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, e.message, e);
-                    that.handleCallback(obj.onError,  err);
-                    that.handleCallback(obj.onFinish, err);
+                    that.handleError(obj, err);
                 }
             });
         }
@@ -240,11 +229,9 @@ M.DataConnectorFirebase = M.DataConnector.extend({
             if (--count <= 0) {
                 if (error) {
                     var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, 'Delete failed.');
-                    that.handleCallback(obj.onError, err);
-                    that.handleCallback(obj.onFinish, err);
+                    that.handleError(obj, err);
                 } else {
-                    that.handleCallback(obj.onSuccess);
-                    that.handleCallback(obj.onFinish);
+                    that.handleSuccess(obj);
                 }
             }
         };
@@ -261,8 +248,7 @@ M.DataConnectorFirebase = M.DataConnector.extend({
                 }
             } catch(e) {
                 var err = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, e.message, e);
-                that.handleCallback(obj.onError,  err);
-                that.handleCallback(obj.onFinish, err);
+                that.handleError(obj, err);
             }
         }
     },
@@ -280,9 +266,8 @@ M.DataConnectorFirebase = M.DataConnector.extend({
     _checkDb: function(obj) {
         // has to be initialized first
         if( !this.db ) {
-            var error = M.Error.create(M.CONST.ERROR.WEBSQL_NO_DBHANDLER, "db handler not initialized.");
-            this.handleCallback(obj.onError, error);
-            this.handleCallback(obj.onFinish, error);
+            var err = M.Error.create(M.CONST.ERROR.WEBSQL_NO_DBHANDLER, "db handler not initialized.");
+            this.handleError(obj, err);
             return false;
         }
         return true;

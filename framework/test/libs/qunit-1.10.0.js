@@ -12,7 +12,7 @@
 
 var QUnit,
 	config,
-	onErrorFnPrev,
+	errorFnPrev,
 	testId = 0,
 	fileName = (sourceFromStacktrace( 0 ) || "" ).replace(/(:\d+)+\)?/, "").replace(/.+\//, ""),
 	toString = Object.prototype.toString,
@@ -1050,20 +1050,20 @@ QUnit.load = function() {
 
 addEvent( window, "load", QUnit.load );
 
-// `onErrorFnPrev` initialized at top of scope
+// `errorFnPrev` initialized at top of scope
 // Preserve other handlers
-onErrorFnPrev = window.onerror;
+errorFnPrev = window.error;
 
 // Cover uncaught exceptions
 // Returning true will surpress the default browser handler,
 // returning false will let it run.
-window.onerror = function ( error, filePath, linerNr ) {
+window.error = function ( error, filePath, linerNr ) {
 	var ret = false;
-	if ( onErrorFnPrev ) {
-		ret = onErrorFnPrev( error, filePath, linerNr );
+	if ( errorFnPrev ) {
+		ret = errorFnPrev( error, filePath, linerNr );
 	}
 
-	// Treat return value as window.onerror itself does,
+	// Treat return value as window.error itself does,
 	// Only do our handling if not surpressed.
 	if ( ret !== true ) {
 		if ( QUnit.config.current ) {

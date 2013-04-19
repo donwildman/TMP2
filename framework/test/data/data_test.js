@@ -73,17 +73,17 @@ asyncTest('M.DataConnector', function () {
     var testFind = function () {
         TEST.Data.find({
             table: 'person',
-            onSuccess: function(result) { testResult(result); },
-            onError: function()   { ok(false, 'error saving person model' ); },
-            onFinish: function()  { ok(true,  'save person model finished' ); start(); }
+            success: function(result) { testResult(result); },
+            error: function()   { ok(false, 'error saving person model' ); },
+            finish: function()  { ok(true,  'save person model finished' ); start(); }
         });
     };
 
     TEST.Data.save({
         data: person,
-        onSuccess: function() { ok(true,  'save person model succeeded' ); },
-        onError: function()   { ok(false, 'error saving person model' ); start(); },
-        onFinish: function()  { ok(true,  'save person model finished' ); testFind(); }
+        success: function() { ok(true,  'save person model succeeded' ); },
+        error: function()   { ok(false, 'error saving person model' ); start(); },
+        finish: function()  { ok(true,  'save person model finished' ); testFind(); }
     });
 });
 
