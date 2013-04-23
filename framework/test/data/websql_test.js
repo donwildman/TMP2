@@ -75,7 +75,7 @@ asyncTest('M.DataConnectorWebSql basics', function () {
         });
     };
 
-    var testFind = function (bmi) {
+    var testFind = function () {
         TEST.WebSql.find({
             table: 'person',
             success: function(result) {
@@ -151,11 +151,10 @@ asyncTest('M.DataConnectorWebSql basics', function () {
         });
     };
 
-
     testDrop();
 });
 
-asyncTest('M.DataConnectorWebSql with collection', function () {
+asyncTest('M.DataConnectorWebSql with array', function () {
 
     var persons = [
         { sureName: 'Stierle' },
@@ -166,9 +165,9 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
         TEST.WebSql.save({
             table: 'person',
             data: persons,
-            success: function() { ok(true,  'save persons collection succeeded.' ); },
-            error: function()   { ok(false, 'error save persons collection.' ); start(); },
-            finish: function()  { ok(true,  'save persons collection finished.' ); testFind(); }
+            success: function() { ok(true,  'save persons array succeeded.' ); },
+            error: function()   { ok(false, 'error save persons array.' ); start(); },
+            finish: function()  { ok(true,  'save persons array finished.' ); testFind(); }
         });
     };
 
@@ -199,7 +198,7 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
         ok(p && p.get('sureName') === 'Stierle', 'Field "sureName" of second record has correct value.');
 
         // get second person record
-        var p = result.getAt(1);
+        p = result.getAt(1);
 
         ok(p && p.get('sureName') === 'Werler', 'Field "sureName" of third record has correct value.');
     };
@@ -222,6 +221,81 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
             error: function()  { ok(false, 'error deleting person model.' ); start(); },
             finish: function() { ok(true,  'del person model finished.' ); }
         });
+    };
+
+    testSave();
+
+});
+
+asyncTest('M.DataConnectorWebSql with collection', function () {
+
+    var persons = M.Collection.create(TEST.Person);
+    persons.add({
+        sureName: 'Laubach',
+        firstName: 'Dominik',
+        id: 4
+    }).add({
+        sureName: 'Hanowski',
+        firstName: 'Marco',
+        id: 1
+    }).add({
+        sureName: 'Stierle',
+        firstName: 'Frank',
+        id: 3
+    }).add({
+        sureName: 'Werler',
+        firstName: 'Sebastian',
+        id: 5
+    }).add({
+        sureName: 'Buck',
+        firstName: 'Stefan',
+        id: 2
+    });
+
+    var testSave = function () {
+        TEST.WebSql.save({
+            table: 'person',
+            data: persons,
+            success: function() { ok(true,  'save persons collection succeeded.' ); },
+            error: function()   { ok(false, 'error save persons collection.' ); start(); },
+            finish: function()  { ok(true,  'save persons collection finished.' ); testFind(); }
+        });
+    };
+
+    var testFind = function (bmi) {
+        TEST.WebSql.find({
+            order: 'id',
+            table: 'person',
+            success: function(result) {
+                ok(true,  'find persons succeeded.' );
+                testResult(result);
+            },
+            error: function()   { ok(false, 'error find persons.' ); start(); },
+            finish: function()  {
+                ok(true,  'find persons finished.');
+                TEST.WebSql.del({ table: 'person' });
+                start();
+            }
+        });
+    };
+
+    var testResult = function(result) {
+
+        ok(typeof result === 'object', 'Find has a response object.');
+
+        ok(M.Collection.isPrototypeOf(result), 'The response is a M.Collection.');
+
+        ok(result.getCount() === 5, 'The response holds 2 records.');
+
+        // get first person record
+        var p = result.getAt(0);
+
+        ok(p && p.get('sureName') === 'Hanowski', 'Field "sureName" of second record has correct value.');
+
+        // get second person record
+        p = result.getAt(1);
+
+        ok(p && p.get('sureName') === 'Buck', 'Field "sureName" of third record has correct value.');
     };
 
     testSave();
