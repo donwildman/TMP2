@@ -53,10 +53,10 @@ M.DataConnector = M.Object.extend({
     },
 
     addTable: function(obj) {
-        if (!obj.name && obj.model) {
+        if (!obj.name && obj.model && _.isFunction(obj.model.getName)) {
             obj.name = obj.model.getName();
         }
-        if (!obj.key && obj.model) {
+        if (!obj.key && obj.model && _.isFunction(obj.model.getKey)) {
             obj.key = obj.model.getKey();
         }
         var table;
@@ -125,11 +125,17 @@ M.DataConnector = M.Object.extend({
         var table = null;
         if (obj.table) {
             table = this._tables[obj.table];
-        } else if (obj.data && _.isFunction(obj.data.getName)) {
-            var name = obj.data.getName();
-            table = _.find(this._tables, function(t) {
-                return t.model ? name === t.model.getName() : name === t.name;
-            });
+        } else {
+            var model =  obj.model || (_.isArray(obj.data) ? obj.data[0] : obj.data);
+            if (model && _.isFunction(model.getName)) {
+                var name = model.getName();
+                table = _.find(this._tables, function(t) {
+                    return t.model ? name === t.model.getName() : name === t.name;
+                });
+                if ( _.isUndefined(table)) {
+                    return this.addTable({ model: model });
+                }
+            }
         }
         return table;
     },
