@@ -25,17 +25,22 @@ M.Logger = M.Object.extend(/** @scope M.Logger.prototype */ {
     filter: [],
 
     /**
-     * @type Sring
+     * @type String
      */
     TAG_ALL: 'all',
 
     /**
-     * @type Sring
+     * @type String
      */
     TAG_FRAMEWORK_CORE: 'framework-core',
+    
+    /**
+     * @type String
+     */
+    TAG_FRAMEWORK_DATA: 'framework-data',
 
     /**
-     * @type Sring
+     * @type String
      */
     TAG_FRAMEWORK_UI: 'framework-ui',
 
