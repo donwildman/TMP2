@@ -227,7 +227,7 @@ M.Logger = M.Object.extend(/** @scope M.Logger.prototype */ {
         output = output || this._OUTPUT_LOG;
 
         // Assign default tag if tag is undefined
-        tag = tag || this.TAG_EMPTY;
+        tag = tag || M.CONST.LOGGER.TAG_ALL;
 
         if (this._preventOutputByTag(tag)) {
             return;

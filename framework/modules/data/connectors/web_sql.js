@@ -130,7 +130,7 @@ M.DataConnectorWebSql = M.DataConnector.extend({
                         var statement = stm.statement || stm;
                         var arguments = stm.arguments;
                         lastStatement = statement;
-                        M.Logger.debug("SQL-Statement: " + statement);
+                        M.Logger.log("SQL-Statement: " + statement);
                         t.executeSql(statement, arguments);
                     });
                 }, function( sqlError ) { // errorCallback
@@ -193,7 +193,7 @@ M.DataConnectorWebSql = M.DataConnector.extend({
                 var arSql = this.buildSqlUpdateDatabase(db.version, this.config.version);
                 db.changeVersion(db.version, this.config.version, function( tx ) {
                         _.each(arSql, function( sql ) {
-                            M.Logger.debug("SQL-Statement: " + sql);
+                            M.Logger.log("SQL-Statement: " + sql);
                             lastSql = sql;
                             tx.executeSql(sql);
                         });
@@ -350,7 +350,7 @@ M.DataConnectorWebSql = M.DataConnector.extend({
                 var statement = stm.statement || stm;
                 var arguments = stm.arguments;
                 lastStatement = statement;
-                M.Logger.debug("SQL-Statement: " + statement);
+                M.Logger.log("SQL-Statement: " + statement);
                 t.executeSql(statement, arguments, function( tx, res ) {
                     var len = res.rows.length;//, i;
                     for( var i = 0; i < len; i++ ) {

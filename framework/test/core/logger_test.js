@@ -12,21 +12,18 @@ test('M.Logger implementation', function() {
     ok(M.Logger.hasOwnProperty('_OUTPUT_WARN') , 'M.Logger._OUTPUT_WARN is defined.');
     ok(M.Logger.hasOwnProperty('_OUTPUT_ERROR') , 'M.Logger._OUTPUT_ERROR is defined.');
     ok(M.Logger.hasOwnProperty('_LEVEL_TIME_END') , 'M.Logger._LEVEL_TIME_END is defined.');
-    ok(M.Logger.hasOwnProperty('TAG_EMPTY') && typeof M.Logger.TAG_EMPTY === 'string', 'M.Logger.TAG_EMPTY is defined.');
 
     ok(typeof M.Logger._OUTPUT_LOG === 'number', 'M.Logger._OUTPUT_LOG is a number.');
     ok(typeof M.Logger._OUTPUT_DEBUG === 'number', 'M.Logger._OUTPUT_DEBUG is a number.');
     ok(typeof M.Logger._OUTPUT_WARN === 'number', 'M.Logger._OUTPUT_WARN is a number.');
     ok(typeof M.Logger._OUTPUT_ERROR === 'number', 'M.Logger._OUTPUT_ERROR is a number.');
     ok(typeof M.Logger._LEVEL_TIME_END === 'number', 'M.Logger._LEVEL_TIME_END is a number.');
-    ok(typeof M.Logger.TAG_EMPTY === 'string', 'M.Logger.TAG_EMPTY is a string.');
 
     ok(M.Logger._OUTPUT_LOG === 0, 'M.Logger._OUTPUT_LOG is 0.');
     ok(M.Logger._OUTPUT_DEBUG === 1, 'M.Logger._OUTPUT_DEBUG is 1.');
     ok(M.Logger._OUTPUT_WARN === 2, 'M.Logger._OUTPUT_WARN is 2.');
     ok(M.Logger._OUTPUT_ERROR === 3, 'M.Logger._OUTPUT_ERROR is 3.');
     ok(M.Logger._LEVEL_TIME_END === 4, 'M.Logger._LEVEL_TIME_END is 4.');
-    ok(M.Logger.TAG_EMPTY === '', 'M.Logger.TAG_EMPTY is equal to "".');
 
     // PROPERTIES defined
     ok(M.Logger.hasOwnProperty('filter') , 'M.Logger.filter is defined.');
