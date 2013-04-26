@@ -7,6 +7,9 @@
     <meta name="viewport" content="initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no,width=device-width">
     <link rel="stylesheet" href="styles/style.css">
     <title>Todo</title>
+    <script>
+        before = new Date().getTime();
+    </script>
     <!-- LIBS -->
     <script src="libs/jquery-1.9.1.js"></script>
     <script src="libs/underscore.js"></script>
@@ -42,6 +45,10 @@
 
     $('body').append(M.VV.render());
 
+</script>
+<script>
+    after = new Date().getTime();
+    alert(after-before);
 </script>
 
 </html>

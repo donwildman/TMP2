@@ -104,6 +104,9 @@ M.Object = /** @scope M.Object.prototype */ {
        		if(typeof that[key] === 'function') {
                 var uniqueName = 'func_' + Math.ceil(Math.random() * 100000);
        			that[key] = new Function('return ' + that[key].toString().replace('function () {', 'function ' + uniqueName + '() {'))();
+                if( M.ViewManager ){
+                    M.ViewManager.addFunctionMapping(uniqueName, that[key]);
+                }
        		}
        	});
     },

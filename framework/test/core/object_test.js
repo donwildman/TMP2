@@ -32,6 +32,9 @@ test('callFromSuper implementation', function() {
     M.Person = M.Object.extend({
         firstName: 'firstNamePerson',
         lastName: 'lastNamePerson',
+        toooString: function(){
+            return this.getAttributeString();
+        },
         getAttributeString: function() {
             return this.firstName + '_' + this.lastName;
         }
@@ -51,6 +54,10 @@ test('callFromSuper implementation', function() {
         getAttributeString: function() {
             var s = this.callFromSuper('getAttributeString');
             return s + '_' + this.workingId;
+        },
+        dooo: function(){
+
+            console.log(this.callFromSuper('toooString'));
         }
     });
 

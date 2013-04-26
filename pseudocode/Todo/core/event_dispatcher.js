@@ -41,6 +41,13 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
 
             var event = this._bindings[jEvt.type][targetView.getId()];
 
+            var caller = M.ViewManager.getFunctionByName(event.callback.name);
+            if(caller) {
+                event.callback.apply(caller, []);
+            }
+
+            return;
+
             /* TODO: get the "app" namespace */
             var caller = null;
 //            _.each(window[M.Application.getConfig('applicationName')], function(obj) {
