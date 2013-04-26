@@ -19,36 +19,39 @@
     <script src="core/object.js"></script>
     <script src="core/const.js"></script>
     <script src="core/exception.js"></script>
-    <script src="core/application.js"></script>
     <script src="config.js"></script>
+    <script src="core/application.js"></script>
+    <script>M.Application.config = M.Config;</script>
     <script src="core/controller.js"></script>
     <script src="core/view_manager.js"></script>
     <script src="core/event_dispatcher.js"></script>
     <script src="core/view.js"></script>
+    <script src="core/layout.js"></script>
+    <script src="core/layout_manager.js"></script>
+
+
+    <script src="layouts/Card/basic.js"></script>
+    <script src="layouts/Tab/basic.js"></script>
+
+
+    <script src="views/label.js"></script>
+
+
 
     <!-- APP -->
     <script src="app/Todo_Application.js"></script>
+    <script src="app/views/Dashboard.js"></script>
 </head>
 
 <body>
-    <div class="loading-page">Loading...</div>
+
 </body>
 
 <script>
-    M.Application.config = M.Config;
     Todo.start();
-
-    M.LabelView = M.View.extend({
-        type: 'M.LabelView'
-    });
-    M.VV = M.LabelView.design({cssClass: 'lol lol1', events:{preRender: function(){console.log('asd');this.cssClass;}}})
-
-    $('body').append(M.VV.render());
-
 </script>
 <script>
     after = new Date().getTime();
-    alert(after-before);
 </script>
 
 </html>

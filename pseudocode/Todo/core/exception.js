@@ -50,3 +50,13 @@ M.Exception.START_NOT_DEFINED = M.Exception.extend(/** @scope M.Exception.protot
     message: 'AppName.start is not defined.',
     name: 'START_NOT_DEFINED'
 });
+
+M.Exception.NO_TEMPLATE_DEFINED = M.Exception.extend(/** @scope M.Exception.prototype */{
+    message: 'There is no template defined.',
+    name: 'NO_TEMPLATE_DEFINED'
+});
+
+M.Exception.SET_VIEW_NOT_DEFINED = M.Exception.extend(/** @scope M.Exception.prototype */{
+    message: 'The current layout has no setView method',
+    name: 'SET_VIEW_NOT_DEFINED'
+});

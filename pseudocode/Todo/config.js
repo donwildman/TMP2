@@ -1,3 +1,4 @@
 M.Config = {
-    applicationName: 'Todo'
+    applicationName: 'Todo',
+    layout: 'CardLayout'
 };

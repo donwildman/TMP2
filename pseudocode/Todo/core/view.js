@@ -18,6 +18,8 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
 
     cssClass: '',
 
+    value: null,
+
     design: function( obj ) {
         var view = this.extend(this._normalize(obj));
         view._id = M.ViewManager.getNewId(view);
@@ -32,6 +34,8 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     render: function() {
         this._preRender();
         this._createDOM();
+        this._addId();
+        this._addTMPClasses();
         this._bindInternalEvents();
         this._style();
         return this.getDOM();
@@ -51,11 +55,16 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     _createDOM: function(){
-        this._dom = $(this._generateMarkup());
+        var html = '<div>' + this._generateMarkup() +'</div>'
+        this._dom = $(html);
+    },
+
+    _addId: function(){
+        $(this._dom).attr('id', this.getId());
     },
 
     _generateMarkup: function(){
-        return '<div style="background: red; height: 10px; width: 10px; display: block;" class="m-view" id="' + this._id + '"><div style="position: absolute; top:0; bottom:0; left: 0; right: 0;"></div></div>';
+        return '<div style="background: red; height: 10px; width: 10px; display: block;"><div style="position: absolute; top:0; bottom:0; left: 0; right: 0;"></div></div>';
     },
 
     _bindInternalEvents: function(){
@@ -67,9 +76,27 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     _style: function(){
-
         var that = this;
         $(this._dom).addClass(that.cssClass);
+    },
+
+    _addTMPClasses: function(){
+        $(this._dom).addClass(Object.getPrototypeOf(this)._getTMPClasses().join(' '));
+    },
+
+    _getTMPClasses: function( cssClasses ){
+        if(!cssClasses) {
+            cssClasses  = [];
+        }
+        cssClasses.push(this._getCssClassByType());
+        if(this !== M.View){
+            Object.getPrototypeOf(this)._getTMPClasses(cssClasses);
+        }
+        return cssClasses;
+    },
+
+    _getCssClassByType: function(){
+        return this.type.replace('.', '-').toLowerCase();
     },
 
     _normalize: function(obj){
@@ -86,7 +113,6 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
 
     _postRender: function() {
         console.log('I BIN DOOOOO');
-debugger;
         this.handleCallback(this.events.postRender);
     }
 
