@@ -7,11 +7,11 @@ $.fn.init = function() {
     }
 
     return (function() {
-        function F() {
+        function f() {
             return jQueryInit.apply(this, args);
         }
 
-        F.prototype = jQueryInit.prototype;
-        return new F();
+        f.prototype = jQueryInit.prototype;
+        return new f();
     })();
 };
