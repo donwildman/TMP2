@@ -2,7 +2,7 @@ var jQueryInit = $.fn.init;
 $.fn.init = function() {
     var args = arguments;
 
-    if( args && args[0] && args[0]._isMView ) {
+    if( args && args[0] && args[0]._isMView && args[0]._dom ) {
         args[0] = args[0]._dom;
     }
 
