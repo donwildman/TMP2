@@ -32,8 +32,6 @@ M.ViewManager = M.Object.extend({
      */
     _views: null,
 
-    _functionNameMap: null,
-
     /**
      * This method returns a unique ID based on nextId and idPrefix. Each view within an
      * application get their own unique ID. This ID is stored both in the view's _id
@@ -53,8 +51,8 @@ M.ViewManager = M.Object.extend({
     /**
      * This method initialized the view manager.
      */
-    init: function() {
-        this.callFromSuper('init');
+    _init: function() {
+        this.callFromSuper('_init');
 
         this._views = {};
     },
