@@ -23,7 +23,6 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     design: function( obj ) {
         var view = this.extend(this._normalize(obj));
         view._id = M.ViewManager.getNewId(view);
-
         return view;
     },
 
@@ -37,6 +36,7 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
         this._addId();
         this._addTMPClasses();
         this._bindInternalEvents();
+        this._renderChildViews();
         this._style();
         return this.getDOM();
     },
@@ -50,8 +50,22 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     getDOM: function(){
-
         return this._dom;
+    },
+
+    _renderChildViews: function(){
+        _.each(this._childViewsAsArray(), function(childView){
+
+            this._appendChildView(this[childView].render())
+        }, this);
+    },
+
+    _appendChildView: function(childViewDOM){
+        $(this._dom).append(childViewDOM);
+    },
+
+    _childViewsAsArray: function(){
+        return this.childViews ? $.trim(this.childViews.replace(/\s+/g, ' ')).split(' ') : [];
     },
 
     _createDOM: function(){
@@ -64,7 +78,7 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     _generateMarkup: function(){
-        return '<div style="background: red; height: 10px; width: 10px; display: block;"><div style="position: absolute; top:0; bottom:0; left: 0; right: 0;"></div></div>';
+        return '';
     },
 
     _bindInternalEvents: function(){
@@ -81,7 +95,7 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     _addTMPClasses: function(){
-        $(this._dom).addClass(Object.getPrototypeOf(this)._getTMPClasses().join(' '));
+        $(this._dom).addClass(Object.getPrototypeOf(this)._getTMPClasses().reverse().join(' '));
     },
 
     _getTMPClasses: function( cssClasses ){

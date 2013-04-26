@@ -7,6 +7,6 @@ M.LabelView = M.View.extend({
     type: 'M.LabelView',
 
     _generateMarkup: function(){
-        return '<div class="m-view" id="' + this._id + '"> ' + this.value + ' </div>';
+        return this.value;
     }
 });
