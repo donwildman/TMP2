@@ -148,20 +148,22 @@ M.DataConnectorFirebase = M.DataConnector.extend({
         var store = this.getCollection(table);
         table.ref = ref;
 
+        table._asRecord = function (snapshot) {
+            if (snapshot) {
+                var name = snapshot.name();
+                var data = snapshot.val();
+                var record = that.createRecord(data, this);
+                record.setId(name);
+                return record;
+            }
+        };
+
         table.onChildAdded = function(snapshot, prevChildName) {
-            var data   = snapshot.val();
-            var record = that.createRecord(data, this);
-            record.setId(snapshot.name());
-            store.add(record);
+            store.add(this._asRecord(snapshot));
         };
 
         table.onChildChanged = function(snapshot, oldName) {
-            var newName = snapshot.name();
-            var record = that.createRecord(snapshot.val(), this);
-            store.set(record, oldName);
-            if (newName != oldName) {
-                store.onChildMoved(record, oldName);
-            }
+            store.set(this._asRecord(snapshot));
         };
 
         table.onChildRemoved = function(snapshot) {

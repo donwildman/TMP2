@@ -57,9 +57,11 @@ M.Collection = M.Object.extend({
 
     indexOf: function(item) {
         var id = M.Model.isPrototypeOf(item) ? item.getId() : item;
-        return _.indexOf(this._records, function(model) {
-             return model.getId() == id;
-        });
+        var index = -1;
+        return _.find(this._records, function(record) {
+            index++;
+            return record.getId() == id;
+        }) ? index : -1;
     },
 
     remove: function(item) {
