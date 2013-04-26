@@ -96,32 +96,35 @@ M.DataConnectorFirebase = M.DataConnector.extend({
 
         var table = this.getTable(obj);
 
-        if (table.ref) {
-            table.ref.off(); // remove all bindings
-            table.ref = null;
-        }
+        if (this._checkTable(table, obj)) {
 
-        if (table.collection) {
-            table.collection.clear();
-            table.collection = null;
-        }
-
-        var onComplete = function(error) {
-            if (error) {
-                var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, 'Remove failed.');
-                that.handleError(obj, err);
-            } else {
-                that.handleSuccess(obj);
+            if (table.ref) {
+                table.ref.off(); // remove all bindings
+                table.ref = null;
             }
-        };
 
-        if (this._checkDb(obj) && this._checkTable(table, obj)) {
-            try {
-                var dbTable = this.db.child(table.name);
-                dbTable.remove(onComplete);
-            } catch(e) {
-                var err = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, e.message, e);
-                that.handleError(obj, err);
+            if (table.collection) {
+                table.collection.clear();
+                table.collection = null;
+            }
+
+            var onComplete = function(error) {
+                if (error) {
+                    var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, 'Remove failed.');
+                    that.handleError(obj, err);
+                } else {
+                    that.handleSuccess(obj);
+                }
+            };
+
+            if (this._checkDb(obj)) {
+                try {
+                    var dbTable = this.db.child(table.name);
+                    dbTable.remove(onComplete);
+                } catch(e) {
+                    var err = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, e.message, e);
+                    that.handleError(obj, err);
+                }
             }
         }
     },
