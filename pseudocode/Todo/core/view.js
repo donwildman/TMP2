@@ -53,17 +53,22 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
         return this._dom;
     },
 
-    setValue: function( value ) {
-        this.value = value;
-        this._update();
-    },
-
     getValue: function() {
+        this.value = this._getValueFromDOM();
         return this.value;
     },
 
-    _update: function(){
-        $(this._dom).text(this.getValue());
+    _getValueFromDOM: function() {
+        return $(this._dom).text();
+    },
+
+    setValue: function( value ) {
+        this.value = value;
+        this._update(this.value);
+    },
+
+    _update: function(value) {
+        $(this._dom).text(value ? value : this.getValue());
     },
 
     _renderChildViews: function() {
@@ -82,6 +87,10 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
     },
 
     _createDOM: function() {
+        if(this._dom) {
+            return this._dom;
+        }
+
         var html = '<div>' + this._generateMarkup() + '</div>'
         this._dom = $(html);
     },
