@@ -4,9 +4,5 @@ M.LabelView = M.View.extend({
      *
      * @type String
      */
-    type: 'M.LabelView',
-
-    _generateMarkup: function(){
-        return this.value;
-    }
+    type: 'M.LabelView'
 });

@@ -45,75 +45,88 @@ M.View = M.Object.extend(/** @scope M.Object.prototype */{
 
     },
 
-    getId: function(){
+    getId: function() {
         return this._id;
     },
 
-    getDOM: function(){
+    getDOM: function() {
         return this._dom;
     },
 
-    _renderChildViews: function(){
-        _.each(this._childViewsAsArray(), function(childView){
+    setValue: function( value ) {
+        this.value = value;
+        this._update();
+    },
+
+    getValue: function() {
+        return this.value;
+    },
+
+    _update: function(){
+        $(this._dom).text(this.getValue());
+    },
+
+    _renderChildViews: function() {
+        _.each(this._childViewsAsArray(), function( childView ) {
 
             this._appendChildView(this[childView].render())
         }, this);
     },
 
-    _appendChildView: function(childViewDOM){
+    _appendChildView: function( childViewDOM ) {
         $(this._dom).append(childViewDOM);
     },
 
-    _childViewsAsArray: function(){
+    _childViewsAsArray: function() {
         return this.childViews ? $.trim(this.childViews.replace(/\s+/g, ' ')).split(' ') : [];
     },
 
-    _createDOM: function(){
-        var html = '<div>' + this._generateMarkup() +'</div>'
+    _createDOM: function() {
+        var html = '<div>' + this._generateMarkup() + '</div>'
         this._dom = $(html);
     },
 
-    _addId: function(){
+    _addId: function() {
         $(this._dom).attr('id', this.getId());
     },
 
-    _generateMarkup: function(){
-        return '';
+    _generateMarkup: function() {
+        return this.value;
     },
 
-    _bindInternalEvents: function(){
+    _bindInternalEvents: function() {
         this.on({
-            events:{
+            events: {
                 click: this._postRender
             }
         });
     },
 
-    _style: function(){
+    _style: function() {
         var that = this;
         $(this._dom).addClass(that.cssClass);
     },
 
-    _addTMPClasses: function(){
+    _addTMPClasses: function() {
         $(this._dom).addClass(Object.getPrototypeOf(this)._getTMPClasses().reverse().join(' '));
     },
 
-    _getTMPClasses: function( cssClasses ){
-        if(!cssClasses) {
-            cssClasses  = [];
+    _getTMPClasses: function( cssClasses ) {
+        if( !cssClasses ) {
+            cssClasses = [];
         }
         cssClasses.push(this._getCssClassByType());
-        if(this !== M.View){
+        if( this !== M.View ) {
             Object.getPrototypeOf(this)._getTMPClasses(cssClasses);
         }
         return cssClasses;
     },
 
-    _getCssClassByType: function(){
+    _getCssClassByType: function() {
         return this.type.replace('.', '-').toLowerCase();
     },
 
-    _normalize: function(obj){
+    _normalize: function( obj ) {
         obj.events = obj.events || {};
         obj._postRender = obj._postRender || this._postRender;
 

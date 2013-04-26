@@ -1,9 +1,11 @@
-M.TabLayout = M.Layout.extend({
+M.TabLayout = M.CardLayout.extend({
 
     type: 'M.TabLayout',
 
-    basicMarkup: function() {
-        return '<div class="layout-container">' + '<div class="tab-layout-a"></div>' + '<div class="tab-layout-b"></div>' + '</div>';
+    setView: function( view ) {
+
+        var html = view.render();
+        $('.layout-container .tab-layout-a').html(html);
     }
 
 });
