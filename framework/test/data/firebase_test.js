@@ -81,7 +81,8 @@ asyncTest('M.DataConnectorFirebase basics', function () {
                 testResult(result);
             },
             error: function()   { ok(false, 'error find person model' ); start(); },
-            finish: function()  { ok(true,  'find person model finished' ); testUpdate(); }
+//            finish: function()  { ok(true,  'find person model finished' ); testUpdate(); }
+            finish: function()  { ok(true,  'find person model finished' ); start(); }
         });
     };
 

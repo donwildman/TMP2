@@ -144,7 +144,7 @@ M.Logger = M.Object.extend(/** @scope M.Logger.prototype */ {
      * @param {String} message The logging message.
      * @param {String/Array} tag
      */
-    error: function (message) {
+    error: function (message, tag) {
         this._print(this._OUTPUT_ERROR, message, tag);
     },
 
