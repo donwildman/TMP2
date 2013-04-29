@@ -21,6 +21,7 @@
     <script src="../modules/core/model.js"></script>
     <script src="../modules/core/collection.js"></script>
     <script src="../modules/utility/date.js"></script>
+    <script src="../modules/utility/i18n.js"></script>
     <script src="../modules/utility/uuid.js"></script>
     <script src="../modules/data/data_connector.js"></script>
     <script src="../modules/data/websql_connector.js"></script>
@@ -36,8 +37,11 @@
         <script src="core/model_test.js"></script>
         <script src="core/logger_test.js"></script>
 
-        <script src="data/collection_test.js"></script>
+    <script>module("utility");</script>
+        <script src="utility/i18n_test.js"></script>
+
     <script>module("data");</script>
+        <script src="data/collection_test.js"></script>
         <script src="data/data_test.js"></script>
    	    <script src="data/websql_test.js"></script>
         <script src="data/firebase_test.js"></script>
