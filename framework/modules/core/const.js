@@ -1,4 +1,37 @@
+/**
+ * @class
+ *
+ * M.CONST defines constants used all over the framework.
+ *
+ */
+
 M.CONST = {
+
+    LOGGER: {
+        /**
+         * Tag for all core framework related log messages
+         * @type String
+         */
+        TAG_FRAMEWORK_CORE: 'framework-core',
+
+        /**
+         * Tag for all data related log messages
+         * @type String
+         */
+        TAG_FRAMEWORK_DATA: 'framework-data',
+
+        /**
+         * Tag for all UI related log messages
+         * @type String
+         */
+        TAG_FRAMEWORK_UI: 'framework-ui',
+
+        /**
+         * Tag for messages that should be shown always
+         * @type String
+         */
+        TAG_ALL: ''
+    },
 
     /***
      * Data type Constants.
@@ -16,7 +49,13 @@ M.CONST = {
 
         FLOAT:      "float",
 
-        OBJECT:     "object"
+        OBJECT:     "object",
+
+        ARRAY:      "array",
+
+        BINARY:     "binary",
+
+        NULL:       "null"
     },
 
     /***

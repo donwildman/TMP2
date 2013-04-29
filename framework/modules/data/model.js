@@ -39,7 +39,6 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     createRecord: function(obj) {
-        var that = this;
         var rec = this.extend();
 
         /* add data to the record property */
@@ -57,7 +56,13 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     set: function(propName, value) {
-        this._data[propName, value];
+//        this._data[propName, value];
+        try {
+            this._data[propName] = value;
+        } catch(e) {
+            M.Logger.error('Error while trying to set value for "' + propName + '": ' + e, M.CONST.LOGGER.TAG_FRAMEWORK_DATA);
+        }
+
     },
 
     /**
@@ -167,4 +172,5 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     _deleteFromData: function(propName) {
         delete this._data[propName];
     }
+
 });

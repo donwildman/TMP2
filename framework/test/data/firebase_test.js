@@ -16,7 +16,7 @@ TEST.Person = M.Model.create({
     }
 });
 
-TEST.Firebase = M.FirebaseConnector.create({
+TEST.Firebase = M.DataConnectorFirebase.create({
     config: {
         name: 'https://mway.firebaseIO.com/test',
         tables: {
@@ -33,7 +33,7 @@ TEST.Firebase = M.FirebaseConnector.create({
     }
 });
 
-asyncTest('M.FirebaseConnector basics', function () {
+asyncTest('M.DataConnectorFirebase basics', function () {
 
     var person = TEST.Person.createRecord({
         id: 1,
@@ -49,39 +49,39 @@ asyncTest('M.FirebaseConnector basics', function () {
     var testDrop = function () {
         TEST.Firebase.drop({
             data: person,
-            onSuccess: function() { ok(true,  'drop table person succeeded.' ); },
-            onError: function()   { ok(false, 'error dropping table person.' ); start(); },
-            onFinish: function()  { ok(true,  'drop table person finished.' ); testCreateTable(); }
+            success: function() { ok(true,  'drop table person succeeded.' ); },
+            error: function()   { ok(false, 'error dropping table person.' ); start(); },
+            finish: function()  { ok(true,  'drop table person finished.' ); testCreateTable(); }
         });
     };
 
     var testCreateTable = function () {
         TEST.Firebase.createTable({
             data: person,
-            onSuccess: function() { ok(true,  'save person model succeeded' ); },
-            onError: function()   { ok(false, 'error saving person model' ); start(); },
-            onFinish: function()  { ok(true,  'save person model finished' ); testSave(); }
+            success: function() { ok(true,  'save person model succeeded' ); },
+            error: function()   { ok(false, 'error saving person model' ); start(); },
+            finish: function()  { ok(true,  'save person model finished' ); testSave(); }
         });
     };
 
     var testSave = function () {
         TEST.Firebase.save({
             data: person,
-            onSuccess: function() { ok(true,  'save person model succeeded' ); },
-            onError: function()   { ok(false, 'error saving person model' ); start(); },
-            onFinish: function()  { ok(true,  'save person model finished' ); testFind(); }
+            success: function() { ok(true,  'save person model succeeded' ); },
+            error: function()   { ok(false, 'error saving person model' ); start(); },
+            finish: function()  { ok(true,  'save person model finished' ); testFind(); }
         });
     };
 
     var testFind = function (bmi) {
         TEST.Firebase.find({
             table: 'person',
-            onSuccess: function(result) {
+            success: function(result) {
                 ok(true,  'find person model succeeded' );
                 testResult(result);
             },
-            onError: function()   { ok(false, 'error find person model' ); start(); },
-            onFinish: function()  { ok(true,  'find person model finished' ); testUpdate(); }
+            error: function()   { ok(false, 'error find person model' ); start(); },
+            finish: function()  { ok(true,  'find person model finished' ); testUpdate(); }
         });
     };
 
@@ -114,19 +114,19 @@ asyncTest('M.FirebaseConnector basics', function () {
 
         TEST.Firebase.save({
             data: person,
-            onSuccess: function() { ok(true,  'update person model succeeded' );
+            success: function() { ok(true,  'update person model succeeded' );
                 TEST.Firebase.find({
                     table: 'person',
-                    onSuccess: function(result) {
+                    success: function(result) {
                         var p = result.getAt(0);
                         ok(p && p.get('bmi') === person.get('bmi'), 'Field "bmi" has correct updated value.');
                     },
-                    onError: function()   { ok(false, 'error find updated person model.' ); start(); },
-                    onFinish: function()  { ok(true,  'find updated person model finished.' ); testDel(); }
+                    error: function()   { ok(false, 'error find updated person model.' ); start(); },
+                    finish: function()  { ok(true,  'find updated person model finished.' ); testDel(); }
                 });
             },
-            onError: function()  { ok(false, 'error updating person model.' ); start(); },
-            onFinish: function() { ok(true,  'update person model finished.' ); }
+            error: function()  { ok(false, 'error updating person model.' ); start(); },
+            finish: function() { ok(true,  'update person model finished.' ); }
         });
     };
 
@@ -134,19 +134,19 @@ asyncTest('M.FirebaseConnector basics', function () {
 
         TEST.Firebase.del({
             data: person,
-            onSuccess: function() {
+            success: function() {
                 ok(true,  'del person model succeeded.' );
                 TEST.Firebase.find({
                     table: 'person',
-                    onSuccess: function(result) {
+                    success: function(result) {
                         ok(result.getCount() === 0, 'record has been deleted.');
                     },
-                    onError: function()   { ok(false, 'error find updated person model.' ); start(); },
-                    onFinish: function()  { ok(true,  'find updated person model finished.' ); start(); }
+                    error: function()   { ok(false, 'error find updated person model.' ); start(); },
+                    finish: function()  { ok(true,  'find updated person model finished.' ); start(); }
                 });
             },
-            onError: function()  { ok(false, 'error deleting person model.' ); start(); },
-            onFinish: function() { ok(true,  'del person model finished.' ); }
+            error: function()  { ok(false, 'error deleting person model.' ); start(); },
+            finish: function() { ok(true,  'del person model finished.' ); }
         });
     };
 
@@ -154,7 +154,7 @@ asyncTest('M.FirebaseConnector basics', function () {
     testDrop();
 });
 
-asyncTest('M.FirebaseConnector with collection', function () {
+asyncTest('M.DataConnectorFirebase with collection', function () {
 
     var persons = [
         { id:23, sureName: 'Stierle' },
@@ -165,9 +165,9 @@ asyncTest('M.FirebaseConnector with collection', function () {
         TEST.Firebase.save({
             table: 'person',
             data: persons,
-            onSuccess: function() { ok(true,  'save persons collection succeeded.' ); },
-            onError: function()   { ok(false, 'error save persons collection.' ); start(); },
-            onFinish: function()  { ok(true,  'save persons collection finished.' ); testFind(); }
+            success: function() { ok(true,  'save persons collection succeeded.' ); },
+            error: function()   { ok(false, 'error save persons collection.' ); start(); },
+            finish: function()  { ok(true,  'save persons collection finished.' ); testFind(); }
         });
     };
 
@@ -175,12 +175,12 @@ asyncTest('M.FirebaseConnector with collection', function () {
         TEST.Firebase.find({
             order: 'id',
             table: 'person',
-            onSuccess: function(result) {
+            success: function(result) {
                 ok(true,  'find persons succeeded.' );
                 testResult(result);
             },
-            onError: function()   { ok(false, 'error find persons.' ); start(); },
-            onFinish: function()  { ok(true,  'find persons finished.'); testDel(); }
+            error: function()   { ok(false, 'error find persons.' ); start(); },
+            finish: function()  { ok(true,  'find persons finished.'); testDel(); }
         });
     };
 
@@ -207,19 +207,19 @@ asyncTest('M.FirebaseConnector with collection', function () {
 
         TEST.Firebase.del({
             table: 'person',
-            onSuccess: function() {
+            success: function() {
                 ok(true,  'del person model succeeded.' );
                 TEST.Firebase.find({
                     table: 'person',
-                    onSuccess: function(result) {
+                    success: function(result) {
                         ok(result.getCount() === 0, 'records have been deleted.');
                     },
-                    onError: function()   { ok(false, 'error find updated person model.' ); start(); },
-                    onFinish: function()  { ok(true,  'find updated person model finished.' ); start(); }
+                    error: function()   { ok(false, 'error find updated person model.' ); start(); },
+                    finish: function()  { ok(true,  'find updated person model finished.' ); start(); }
                 });
             },
-            onError: function()  { ok(false, 'error deleting person model.' ); start(); },
-            onFinish: function() { ok(true,  'del person model finished.' ); }
+            error: function()  { ok(false, 'error deleting person model.' ); start(); },
+            finish: function() { ok(true,  'del person model finished.' ); }
         });
     };
 

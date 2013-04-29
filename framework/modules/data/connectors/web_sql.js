@@ -1,4 +1,4 @@
-// ==========================================================================
+   // ==========================================================================
 // Project:   The M-Project - Mobile HTML5 Application Framework
 // Copyright: (c) 2013 M-Way Solutions GmbH. All rights reserved.
 //            (c) 2013 panacoda GmbH. All rights reserved.
@@ -9,9 +9,9 @@
 //            http://github.com/mwaylabs/The-M-Project/blob/master/GPL-LICENSE
 // ==========================================================================
 
-M.WebSqlConnector = M.DataConnector.extend({
+M.DataConnectorWebSql = M.DataConnector.extend({
 
-    _type: 'M.WebSqlConnector',
+    _type: 'M.DataConnectorWebSql',
 
     _typeMapping: {
         'string':  'varchar(255)',
@@ -54,10 +54,10 @@ M.WebSqlConnector = M.DataConnector.extend({
         this._initialized = true;
 
         this.openDb({
-            onError: function( msg ) {
+            error: function( msg ) {
                 M.Logger.error(msg);
             },
-            onSuccess: function() {
+            success: function() {
                 that._callback(obj, callback);
             }
         });
@@ -68,6 +68,14 @@ M.WebSqlConnector = M.DataConnector.extend({
             this._init(obj, this.insertOrReplace);
         } else {
             this.insertOrReplace(obj);
+        }
+    },
+
+    update: function( obj ) {
+        if( !this._initialized ) {
+            this._init(obj, this.updateOrReplace);
+        } else {
+            this.updateOrReplace(obj);
         }
     },
 
@@ -96,6 +104,20 @@ M.WebSqlConnector = M.DataConnector.extend({
         }
     },
 
+    execute: function(obj) {
+        if( !this._initialized ) {
+            this._init(obj, this.executeSql);
+        } else {
+            this.executeSql(obj);
+        }
+    },
+
+    executeSql: function(obj) {
+        if (obj.sql) {
+            this.executeTransaction(obj, [obj.sql]);
+        }
+    },
+
     executeTransaction: function(obj, statements ) {
         var error;
         var lastStatement;
@@ -108,24 +130,22 @@ M.WebSqlConnector = M.DataConnector.extend({
                         var statement = stm.statement || stm;
                         var arguments = stm.arguments;
                         lastStatement = statement;
-                        M.Logger.debug("SQL-Statement: " + statement);
+                        M.Logger.log("SQL-Statement: " + statement);
                         t.executeSql(statement, arguments);
                     });
                 }, function( sqlError ) { // errorCallback
                     that._transactionFailed = YES;
                     var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, sqlError);
-                    that.handleCallback(obj.onError, err, lastStatement);
-                    that.handleCallback(obj.onFinish, err);
+                    that.handleError(obj, err, lastStatement);
                 }, function() {
-                    that.handleCallback(obj.onSuccess);
-                    that.handleCallback(obj.onFinish);
+                    that.handleSuccess(obj);
                 });
             } catch( e ) {
                 error = M.Error.create(M.CONST.ERROR.WEBSQL_UNKNOWN, e.message, e);
             }
         }
         if( error ) {
-            this.handleCallback(obj.onError, error, lastSql);
+            this.handleCallback(obj.error, error, lastSql);
         }
     },
 
@@ -150,7 +170,7 @@ M.WebSqlConnector = M.DataConnector.extend({
             if( this.config.version && this.db.version != this.config.version ) {
                 this.updateDb(obj);
             } else {
-                this.handleCallback(obj.onSuccess, this.db);
+                this.handleSuccess(obj, this.db);
             }
         } else if( dbError == 2 ) {
             // Version number mismatch.
@@ -159,29 +179,29 @@ M.WebSqlConnector = M.DataConnector.extend({
             if (!error && dbError) {
                 error = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, dbError.message, dbError);
             }
-            this.handleCallback(obj.onError, error);
+            this.handleSuccess(obj, error);
         }
     },
 
     updateDb: function( obj ) {
         var error;
         var lastSql;
+        var that = this;
         try {
-            var that = this;
             var db = window.openDatabase(this.config.name, "", "", this.config.size);
             try {
                 var arSql = this.buildSqlUpdateDatabase(db.version, this.config.version);
                 db.changeVersion(db.version, this.config.version, function( tx ) {
                         _.each(arSql, function( sql ) {
-                            M.Logger.debug("SQL-Statement: " + sql);
+                            M.Logger.log("SQL-Statement: " + sql);
                             lastSql = sql;
                             tx.executeSql(sql);
                         });
                     }, function( msg ) {
                         var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, msg, arSql);
-                        that.handleCallback(obj.onError, err, lastSql);
+                        that.handleError(obj, err, lastSql);
                     }, function() {
-                        that.handleCallback(obj.onSuccess);
+                        that.handleSuccess(obj);
                     });
             } catch( e ) {
                 error = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, e.message, e);
@@ -191,7 +211,7 @@ M.WebSqlConnector = M.DataConnector.extend({
             error = M.Error.create(M.CONST.ERROR.WEBSQL_DATABASE, e.message, e);
         }
         if( error ) {
-            this.handleCallback(obj.onError, error);
+            this.handleError(obj, error);
         }
     },
 
@@ -221,7 +241,7 @@ M.WebSqlConnector = M.DataConnector.extend({
             this.executeTransaction( obj, sql);
         }
         if(error) {
-            return this.handleCallback(obj.onError, error);
+            return this.handleError(obj, error);
         }
     },
 
@@ -286,6 +306,35 @@ M.WebSqlConnector = M.DataConnector.extend({
         }
     },
 
+    updateOrReplace: function( obj ) {
+        // get data
+        var data  = this.getData(obj);
+        // get table
+        var table = this.getTable(obj);
+
+        if (this._checkDb(obj) && this._checkTable(obj, table) && this._checkData(obj, data)) {
+
+            data  = _.isArray(data) ? data : [ data ];
+            var where = buildWhere(obj);
+            var statements  = [];
+            var sqlTemplate = "UPDATE OR REPLACE '" + table.name + "' SET";
+            for( var i = 0; i < data.length; i++ ) {
+                var statement = ''; // the actual sql insert string with values
+                var value = this.fromRecord(data[i], table);
+                var args  = _.values(value);
+                var keys  = _.keys  (value);
+                if (args.length > 0) {
+                    var columns = "'" + keys.join("'=?,'") + "'=?";
+                    statement += sqlTemplate + columns + where + ';';
+                    statements.push( { statement: statement, arguments: args } );
+                }
+            }
+            // reset flag
+            this._transactionFailed = NO;
+            this.executeTransaction(obj, statements);
+        }
+    },
+
     select: function( obj ) {
 
         var table = this.getTable(obj);
@@ -301,7 +350,7 @@ M.WebSqlConnector = M.DataConnector.extend({
                 var statement = stm.statement || stm;
                 var arguments = stm.arguments;
                 lastStatement = statement;
-                M.Logger.debug("SQL-Statement: " + statement);
+                M.Logger.log("SQL-Statement: " + statement);
                 t.executeSql(statement, arguments, function( tx, res ) {
                     var len = res.rows.length;//, i;
                     for( var i = 0; i < len; i++ ) {
@@ -310,14 +359,12 @@ M.WebSqlConnector = M.DataConnector.extend({
                     }
                 }, function() {
                     // M.Logger.log('Incorrect statement: ' + sql, M.ERR)
-                }) // callbacks: SQLStatementErrorCallback
+                }); // callbacks: SQLStatementErrorCallback
             }, function( sqlError ) { // errorCallback
                 var err = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, sqlError);
-                that.handleCallback(obj.onError, err, lastStatement);
-                that.handleCallback(obj.onFinish, err);
+                that.handleError(obj, err, lastStatement);
             }, function() { // voidCallback (success)
-                that.handleCallback(obj.onSuccess, result);
-                that.handleCallback(obj.onFinish, result);
+                that.handleSuccess(obj, result);
             });
         }
     },
@@ -353,8 +400,7 @@ M.WebSqlConnector = M.DataConnector.extend({
         // has to be initialized first
         if( !this.db ) {
             var error = M.Error.create(M.CONST.ERROR.WEBSQL_NO_DBHANDLER, "db handler not initialized.");
-            this.handleCallback(obj.onError, error);
-            this.handleCallback(obj.onFinish, error);
+            this.handleError(obj, error);
             return false;
         }
         return true;
@@ -363,8 +409,7 @@ M.WebSqlConnector = M.DataConnector.extend({
     _checkTable: function(obj, table) {
         if( !table ) {
             var error = M.Error.create(M.CONST.ERROR.WEBSQL_SYNTAX, "No valid table passed.");
-            this.handleCallback(obj.onError, error);
-            this.handleCallback(obj.onFinish, error);
+            this.handleError(obj, error);
             return false;
         }
         return true;
@@ -374,8 +419,7 @@ M.WebSqlConnector = M.DataConnector.extend({
         /* if no data were passed execute error callback and pass it an error object */
         if( (!_.isArray(data) || data.length == 0) && !_.isObject(data) ) {
             var error = M.Error.create(M.CONST.ERROR.WEBSQL_BULK_NO_RECORDS, "No data passed.");
-            this.handleCallback(obj.onError,  error);
-            this.handleCallback(obj.onFinish, error);
+            this.handleError(obj, error);
             return false;
         }
         return true;
@@ -438,6 +482,16 @@ M.WebSqlConnector = M.DataConnector.extend({
         return sql;
     },
 
+    buildSqlWhere: function(obj, table) {
+        var sql = '';
+        if( _.isString(obj.where) ) {
+            sql += ' WHERE ' + obj.where;
+        } else  if ( _.isObject(obj.where) ) {
+
+        }
+        return sql;
+    },
+
     buildSqlSelect: function(obj, table) {
 
         var sql = 'SELECT ';
@@ -460,9 +514,7 @@ M.WebSqlConnector = M.DataConnector.extend({
             sql += ' LEFT JOIN ' + obj.leftJoin;
         }
 
-        if( obj.where ) {
-            sql += ' WHERE ' + obj.where;
-        }
+        var where = this.buildSqlWhere(obj);
 
         if( obj.order ) {
             sql += ' ORDER BY ' + obj.order;

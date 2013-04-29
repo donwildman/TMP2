@@ -27,19 +27,41 @@ M.Collection = M.Object.extend({
     },
 
     add: function(record) {
-        if ( M.Model.isPrototypeOf(record)) {
-            this._records.push(record);
-        } else if ( _.isObject(record) && this._model) {
-            this._records.push(this._model.createRecord(record));
+        var rec = this._asRecord(record);
+        if (rec) {
+            this._records.push(rec);
         }
         return this;
     },
 
+    set: function(record) {
+        var rec = this._asRecord(record);
+        if (rec) {
+            var index = this.indexOf(rec);
+            if (index >= 0) {
+                this._records[index] = rec;
+            } else {
+                this._records.push(rec);
+            }
+        }
+        return this;
+    },
+
+    _asRecord: function(record) {
+        if (M.Model.isPrototypeOf(record)) {
+            return record;
+        } else if ( _.isObject(record) && this._model) {
+            return this._model.createRecord(record);
+        }
+    },
+
     indexOf: function(item) {
         var id = M.Model.isPrototypeOf(item) ? item.getId() : item;
-        return _.indexOf(this._records, function(model) {
-             return model.getId() == id;
-        });
+        var index = -1;
+        return _.find(this._records, function(record) {
+            index++;
+            return record.getId() == id;
+        }) ? index : -1;
     },
 
     remove: function(item) {
@@ -69,26 +91,21 @@ M.Collection = M.Object.extend({
         });
     },
 
-    set: function(record) {
-        var index = this.indexOf(record);
-        if (index >= 0) {
-            this._records[index] = record;
-        } else {
-            this._records.push(record);
-        }
-    },
-
     find: function(obj) {
         if (obj && (obj.id || obj.where)) {
+            var selector = obj.where ? M.DataSelector.create(obj.where) : null;
             var collect = M.Collection.create(this._model);
             var records = records || this._records;
             _.each(records, function(record) {
-                if (!id || record.getId() === id) {
-                    if (!where || that.matches(record.getData(), where)) {
+                if (!obj.id || record.getId() === obj.id) {
+                    if (!selector || selector.matches(record)) {
                         collect.add(record);
                     }
                 }
             });
+            if (obj.sort) {
+                collect.sortBy(M.DataSelector.compileSort(obj.sort));
+            }
             return collect;
         } else {
             return this;
@@ -108,26 +125,17 @@ M.Collection = M.Object.extend({
         return this._records;
     },
 
-    getData: function(records, id, where) {
-        records = records || this._records;
+    getData: function() {
+        var records = this._records || [];
         var data = [];
         _.each(records, function(record) {
-            if (!id || record.getId() === id) {
-                var rec = record.getData();
-                if (!where || that.matches(rec, where)) {
-                    data.push(rec);
-                }
+            var rec = record.getData();
+            if ( _.isObject(rec)) {
+                data.push(rec);
             }
         });
         return data;
     },
-
-    matches: function(where) {
-        return _.every(r, function(val, key) {
-            return val === where[key];
-        });
-    },
-
 
     /**
      * Sorts records based on either
