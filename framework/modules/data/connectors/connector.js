@@ -174,6 +174,11 @@ M.DataConnector = M.Object.extend({
         return this.getFields(table)[name];
     },
 
+    getFieldName: function(table, name) {
+        var field = this.getField(table, name);
+        return field && field.name ? field.name : name;
+    },
+
     getData: function(obj) {
         if (obj && obj.data) {
             return _.isFunction(obj.data.getData) ? obj.data.getData() : obj.data;

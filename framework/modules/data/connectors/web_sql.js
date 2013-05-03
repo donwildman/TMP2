@@ -485,9 +485,10 @@ M.DataConnectorWebSql = M.DataConnector.extend({
     buildSqlWhere: function(obj, table) {
         var sql = '';
         if( _.isString(obj.where) ) {
-            sql += ' WHERE ' + obj.where;
+            sql = obj.where;
         } else  if ( _.isObject(obj.where) ) {
-
+            var selector = M.SqlSelector.create(obj.where);
+            sql = selector.buildStatement();
         }
         return sql;
     },
@@ -515,6 +516,9 @@ M.DataConnectorWebSql = M.DataConnector.extend({
         }
 
         var where = this.buildSqlWhere(obj);
+        if (where) {
+            sql += ' WHERE ' + where;
+        }
 
         if( obj.order ) {
             sql += ' ORDER BY ' + obj.order;
