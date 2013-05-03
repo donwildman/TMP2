@@ -266,6 +266,10 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
         TEST.WebSql.find({
             order: 'id',
             table: 'person',
+            where: { $or: [
+                { sure_name: /er/ },
+                { id: { $gt: 1, $lte: 2 } } ]
+            },
             success: function(result) {
                 ok(true,  'find persons succeeded.' );
                 testResult(result);
@@ -273,7 +277,7 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
             error: function()   { ok(false, 'error find persons.' ); start(); },
             finish: function()  {
                 ok(true,  'find persons finished.');
-                TEST.WebSql.del({ table: 'person' });
+               // TEST.WebSql.del({ table: 'person' });
                 start();
             }
         });
@@ -285,17 +289,17 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
 
         ok(M.Collection.isPrototypeOf(result), 'The response is a M.Collection.');
 
-        ok(result.getCount() === 5, 'The response holds 2 records.');
+        ok(result.getCount() === 3, 'The response holds 3 records.');
 
         // get first person record
         var p = result.getAt(0);
 
-        ok(p && p.get('sureName') === 'Hanowski', 'Field "sureName" of second record has correct value.');
+        ok(p && p.get('sureName') === 'Buck', 'Field "sureName" of first record has correct value.');
 
         // get second person record
         p = result.getAt(1);
 
-        ok(p && p.get('sureName') === 'Buck', 'Field "sureName" of third record has correct value.');
+        ok(p && p.get('sureName') === 'Stierle', 'Field "sureName" of second record has correct value.');
     };
 
     testSave();
