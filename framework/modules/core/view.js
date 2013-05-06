@@ -117,6 +117,21 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
     },
 
     /**
+     * This method is called once the view got appended to the live DOM. It triggers
+     * the registered callbacks for post rendering on itself and all of its child views.
+     *
+     * Within this method (and the triggered post rendering callbacks) the live DOM can be
+     * accessed. This allows to e.g. get the view's dimensions for theming/styling purpose.
+     */
+    theme: function() {
+        this._postRender();
+
+        _.each(this._childViewsAsArray(), function( childView ) {
+            this[childView]._postRender();
+        }, this);
+    },
+
+    /**
      * This method is used internally to process the configuration object for the view
      * before handing it to the extend method. The job of this method is to make sure that
      * the configuration object fits the requirements of the extend process.
