@@ -57,9 +57,11 @@ M.Collection = M.Object.extend({
 
     indexOf: function(item) {
         var id = M.Model.isPrototypeOf(item) ? item.getId() : item;
-        return _.indexOf(this._records, function(model) {
-             return model.getId() == id;
-        });
+        var index = -1;
+        return _.find(this._records, function(record) {
+            index++;
+            return record.getId() == id;
+        }) ? index : -1;
     },
 
     remove: function(item) {
@@ -123,15 +125,13 @@ M.Collection = M.Object.extend({
         return this._records;
     },
 
-    getData: function(records, id, where) {
-        records = records || this._records;
+    getData: function() {
+        var records = this._records || [];
         var data = [];
         _.each(records, function(record) {
-            if (!id || record.getId() === id) {
-                var rec = record.getData();
-                if (!where || that.matches(rec, where)) {
-                    data.push(rec);
-                }
+            var rec = record.getData();
+            if ( _.isObject(rec)) {
+                data.push(rec);
             }
         });
         return data;

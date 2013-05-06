@@ -51,39 +51,39 @@ asyncTest('M.DataConnectorWebSql basics', function () {
     var testDrop = function () {
         TEST.WebSql.drop({
             table: 'person',
-            onSuccess: function() { ok(true,  'drop table person succeeded.' ); },
-            onError: function()   { ok(false, 'error dropping table person.' ); start(); },
-            onFinish: function()  { ok(true,  'drop table person finished.' ); testCreateTable(); }
+            success: function() { ok(true,  'drop table person succeeded.' ); },
+            error: function()   { ok(false, 'error dropping table person.' ); start(); },
+            finish: function()  { ok(true,  'drop table person finished.' ); testCreateTable(); }
         });
     };
 
     var testCreateTable = function () {
         TEST.WebSql.createTable({
             table: 'person',
-            onSuccess: function() { ok(true,  'save person model succeeded' ); },
-            onError: function()   { ok(false, 'error saving person model' ); start(); },
-            onFinish: function()  { ok(true,  'save person model finished' ); testSave(); }
+            success: function() { ok(true,  'save person model succeeded' ); },
+            error: function()   { ok(false, 'error saving person model' ); start(); },
+            finish: function()  { ok(true,  'save person model finished' ); testSave(); }
         });
     };
 
     var testSave = function () {
         TEST.WebSql.save({
             data: person,
-            onSuccess: function() { ok(true,  'save person model succeeded' ); },
-            onError: function()   { ok(false, 'error saving person model' ); start(); },
-            onFinish: function()  { ok(true,  'save person model finished' ); testFind(); }
+            success: function() { ok(true,  'save person model succeeded' ); },
+            error: function()   { ok(false, 'error saving person model' ); start(); },
+            finish: function()  { ok(true,  'save person model finished' ); testFind(); }
         });
     };
 
-    var testFind = function (bmi) {
+    var testFind = function () {
         TEST.WebSql.find({
             table: 'person',
-            onSuccess: function(result) {
+            success: function(result) {
                 ok(true,  'find person model succeeded' );
                 testResult(result);
             },
-            onError: function()   { ok(false, 'error find person model' ); start(); },
-            onFinish: function()  { ok(true,  'find person model finished' ); testUpdate(); }
+            error: function()   { ok(false, 'error find person model' ); start(); },
+            finish: function()  { ok(true,  'find person model finished' ); testUpdate(); }
         });
     };
 
@@ -115,19 +115,19 @@ asyncTest('M.DataConnectorWebSql basics', function () {
 
         TEST.WebSql.save({
             data: person,
-            onSuccess: function() { ok(true,  'update person model succeeded' );
+            success: function() { ok(true,  'update person model succeeded' );
                 TEST.WebSql.find({
                     table: 'person',
-                    onSuccess: function(result) {
+                    success: function(result) {
                         var p = result.getAt(0);
                         ok(p.get('bmi') === person.get('bmi'), 'Field "bmi" has correct updated value.');
                     },
-                    onError: function()   { ok(false, 'error find updated person model.' ); start(); },
-                    onFinish: function()  { ok(true,  'find updated person model finished.' ); testDel(); }
+                    error: function()   { ok(false, 'error find updated person model.' ); start(); },
+                    finish: function()  { ok(true,  'find updated person model finished.' ); testDel(); }
                 });
             },
-            onError: function()  { ok(false, 'error updating person model.' ); start(); },
-            onFinish: function() { ok(true,  'update person model finished.' ); }
+            error: function()  { ok(false, 'error updating person model.' ); start(); },
+            finish: function() { ok(true,  'update person model finished.' ); }
         });
     };
 
@@ -135,27 +135,26 @@ asyncTest('M.DataConnectorWebSql basics', function () {
 
         TEST.WebSql.del({
             data: person,
-            onSuccess: function() {
+            success: function() {
                 ok(true,  'del person model succeeded.' );
                 TEST.WebSql.find({
                     table: 'person',
-                    onSuccess: function(result) {
+                    success: function(result) {
                         ok(result.getCount() === 0, 'record has been deleted.');
                     },
-                    onError: function()   { ok(false, 'error find updated person model.' ); start(); },
-                    onFinish: function()  { ok(true,  'find updated person model finished.' ); start(); }
+                    error: function()   { ok(false, 'error find updated person model.' ); start(); },
+                    finish: function()  { ok(true,  'find updated person model finished.' ); start(); }
                 });
             },
-            onError: function()  { ok(false, 'error deleting person model.' ); start(); },
-            onFinish: function() { ok(true,  'del person model finished.' ); }
+            error: function()  { ok(false, 'error deleting person model.' ); start(); },
+            finish: function() { ok(true,  'del person model finished.' ); }
         });
     };
-
 
     testDrop();
 });
 
-asyncTest('M.DataConnectorWebSql with collection', function () {
+asyncTest('M.DataConnectorWebSql with array', function () {
 
     var persons = [
         { sureName: 'Stierle' },
@@ -166,9 +165,9 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
         TEST.WebSql.save({
             table: 'person',
             data: persons,
-            onSuccess: function() { ok(true,  'save persons collection succeeded.' ); },
-            onError: function()   { ok(false, 'error save persons collection.' ); start(); },
-            onFinish: function()  { ok(true,  'save persons collection finished.' ); testFind(); }
+            success: function() { ok(true,  'save persons array succeeded.' ); },
+            error: function()   { ok(false, 'error save persons array.' ); start(); },
+            finish: function()  { ok(true,  'save persons array finished.' ); testFind(); }
         });
     };
 
@@ -176,12 +175,12 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
         TEST.WebSql.find({
             order: 'id',
             table: 'person',
-            onSuccess: function(result) {
+            success: function(result) {
                 ok(true,  'find persons succeeded.' );
                 testResult(result);
             },
-            onError: function()   { ok(false, 'error find persons.' ); start(); },
-            onFinish: function()  { ok(true,  'find persons finished.'); testDel(); }
+            error: function()   { ok(false, 'error find persons.' ); start(); },
+            finish: function()  { ok(true,  'find persons finished.'); testDel(); }
         });
     };
 
@@ -199,7 +198,7 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
         ok(p && p.get('sureName') === 'Stierle', 'Field "sureName" of second record has correct value.');
 
         // get second person record
-        var p = result.getAt(1);
+        p = result.getAt(1);
 
         ok(p && p.get('sureName') === 'Werler', 'Field "sureName" of third record has correct value.');
     };
@@ -208,20 +207,99 @@ asyncTest('M.DataConnectorWebSql with collection', function () {
 
         TEST.WebSql.del({
             table: 'person',
-            onSuccess: function() {
+            success: function() {
                 ok(true,  'del person model succeeded.' );
                 TEST.WebSql.find({
                     table: 'person',
-                    onSuccess: function(result) {
+                    success: function(result) {
                         ok(result.getCount() === 0, 'records have been deleted.');
                     },
-                    onError: function()   { ok(false, 'error find updated person model.' ); start(); },
-                    onFinish: function()  { ok(true,  'find updated person model finished.' ); start(); }
+                    error: function()   { ok(false, 'error find updated person model.' ); start(); },
+                    finish: function()  { ok(true,  'find updated person model finished.' ); start(); }
                 });
             },
-            onError: function()  { ok(false, 'error deleting person model.' ); start(); },
-            onFinish: function() { ok(true,  'del person model finished.' ); }
+            error: function()  { ok(false, 'error deleting person model.' ); start(); },
+            finish: function() { ok(true,  'del person model finished.' ); }
         });
+    };
+
+    testSave();
+
+});
+
+asyncTest('M.DataConnectorWebSql with collection', function () {
+
+    var persons = M.Collection.create(TEST.Person);
+    persons.add({
+        sureName: 'Laubach',
+        firstName: 'Dominik',
+        id: 4
+    }).add({
+        sureName: 'Hanowski',
+        firstName: 'Marco',
+        id: 1
+    }).add({
+        sureName: 'Stierle',
+        firstName: 'Frank',
+        id: 3
+    }).add({
+        sureName: 'Werler',
+        firstName: 'Sebastian',
+        id: 5
+    }).add({
+        sureName: 'Buck',
+        firstName: 'Stefan',
+        id: 2
+    });
+
+    var testSave = function () {
+        TEST.WebSql.save({
+            table: 'person',
+            data: persons,
+            success: function() { ok(true,  'save persons collection succeeded.' ); },
+            error: function()   { ok(false, 'error save persons collection.' ); start(); },
+            finish: function()  { ok(true,  'save persons collection finished.' ); testFind(); }
+        });
+    };
+
+    var testFind = function (bmi) {
+        TEST.WebSql.find({
+            order: 'id',
+            table: 'person',
+            where: { $or: [
+                { sure_name: /er/ },
+                { id: { $gt: 1, $lte: 2 } } ]
+            },
+            success: function(result) {
+                ok(true,  'find persons succeeded.' );
+                testResult(result);
+            },
+            error: function()   { ok(false, 'error find persons.' ); start(); },
+            finish: function()  {
+                ok(true,  'find persons finished.');
+               // TEST.WebSql.del({ table: 'person' });
+                start();
+            }
+        });
+    };
+
+    var testResult = function(result) {
+
+        ok(typeof result === 'object', 'Find has a response object.');
+
+        ok(M.Collection.isPrototypeOf(result), 'The response is a M.Collection.');
+
+        ok(result.getCount() === 3, 'The response holds 3 records.');
+
+        // get first person record
+        var p = result.getAt(0);
+
+        ok(p && p.get('sureName') === 'Buck', 'Field "sureName" of first record has correct value.');
+
+        // get second person record
+        p = result.getAt(1);
+
+        ok(p && p.get('sureName') === 'Stierle', 'Field "sureName" of second record has correct value.');
     };
 
     testSave();

@@ -16,9 +16,6 @@ test('M.Model', function() {
                 address:     { type: M.CONST.TYPE.OBJECT },
                 displayName: { type: M.CONST.TYPE.STRING, persistent: NO }
             }
-        },
-        init: function() {
-            this.displayName = this.firstName + ' ' + this.lastName;
         }
     });
 
