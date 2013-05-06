@@ -90,6 +90,13 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      */
     _init: function() {
         this.events = this.events || {};
+
+        /* preRender/postRender event but not target? set view as target */
+        _.each(['preRender', 'postRender'], function(eventName) {
+            if(this.events[eventName] && !this.events[eventName].target) {
+                this.events[eventName].target = this;
+            }
+        }, this);
     },
 
     /**
