@@ -56,7 +56,13 @@ M.Model = M.Object.extend( /** @scope M.Model.prototype */ {
     },
 
     set: function(propName, value) {
-        this._data[propName, value];
+//        this._data[propName, value];
+        try {
+            this._data[propName] = value;
+        } catch(e) {
+            M.Logger.error('Error while trying to set value for "' + propName + '": ' + e, M.CONST.LOGGER.TAG_FRAMEWORK_DATA);
+        }
+
     },
 
     /**

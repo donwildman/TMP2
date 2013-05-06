@@ -9,6 +9,9 @@ test('M Namespace', function () {
     ok(typeof M.Version === 'string', 'M.Version is a string');
     ok(parseInt(M.Version.split('.')[0]) >= 2, 'old TMP version ');
 
+    ok(M.f, 'M.f is defined');
+    ok(typeof(M.f) === 'function', 'M.f is a function');
+
     ok(!NO, 'NO is defined');
 
     ok(typeof NO === 'boolean', 'NO is a boolean');
