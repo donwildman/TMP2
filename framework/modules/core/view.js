@@ -162,23 +162,32 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _createDOM: function() {
-        if( this._dom ) {
-            return this._dom;
+        if( !this._dom ) {
+            var html = '<div>' + this._generateMarkup() + '</div>';
+            this._dom = $(html);
         }
-
-        var html = '<div>' + this._generateMarkup() + '</div>'
-        this._dom = $(html);
     },
 
     /**
      * This method generates the view's markup for the DOM. In M.View's basic implementation,
-     * it only returns the view's value.
+     * it only returns the view's value (by calling _getValueForDOM() internally).
      *
      * @returns {String|value}
      * @private
      */
     _generateMarkup: function() {
-        return this.value;
+        return this._getValueForDOM();
+    },
+
+    /**
+     * This method is responsible for returning the view's value prepared for adding it to
+     * the DOM. In this basic implementation this simply return the view's value property.
+     *
+     * @returns {String|value}
+     * @private
+     */
+    _getValueForDOM: function() {
+        return this.value ? this.value : '';
     },
 
     /**
@@ -320,17 +329,15 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      */
     setValue: function( value ) {
         this.value = value;
-        this.update(this.value);
+        this.update();
     },
 
     /**
-     * This method updated the view's DOM based on a passed value. In this basic implementation,
+     * This method updated the view's DOM based on the value property. In this basic implementation,
      * jQuery's text() is used for this.
-     *
-     * @param value
      */
-    update: function( value ) {
-        $(this._dom).text(value);
+    update: function() {
+        $(this._dom).text(this._getValueForDOM());
     }
 
 });
