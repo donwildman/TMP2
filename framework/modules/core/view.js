@@ -23,6 +23,15 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
     type: 'M.View',
 
     /**
+     * This property contains the jQuery object for this view. It is automatically
+     * set once the view's DOM was created.
+     *
+     * @type Object
+     * @private
+     */
+    _$: null,
+
+    /**
      * This property contains the view's DOM representation.
      *
      * @type Object
@@ -118,16 +127,25 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
 
     /**
      * This method is called once the view got appended to the live DOM. It triggers
-     * the registered callbacks for post rendering on itself and all of its child views.
+     * the registered callbacks for post rendering and initializes the theming for
+     * all of its child views by calling _themeChildViews().
      *
      * Within this method (and the triggered post rendering callbacks) the live DOM can be
      * accessed. This allows to e.g. get the view's dimensions for theming/styling purpose.
      */
     theme: function() {
         this._postRender();
+        this._themeChildViews();
+    },
 
+    /**
+     * This method initializes the theming process for each available child view.
+     *
+     * @private
+     */
+    _themeChildViews: function() {
         _.each(this._childViewsAsArray(), function( childView ) {
-            this[childView]._postRender();
+            this[childView].theme();
         }, this);
     },
 
@@ -180,7 +198,26 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
         if( !this._dom ) {
             var html = '<div>' + this._generateMarkup() + '</div>';
             this._dom = $(html);
+            this._$ = $(this);
         }
+    },
+
+    /**
+     * This method returns the corresponding jQuery selector for this view.
+     *
+     * @returns {Object|_$}
+     */
+    getjQuerySelector: function() {
+        return this._$;
+    },
+
+    /**
+     * This method is an alias method for getjQuerySelector().
+     *
+     * @returns {Object|_$}
+     */
+    get$: function() {
+        return this.getjQuerySelector();
     },
 
     /**
