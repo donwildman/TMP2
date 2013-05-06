@@ -30,20 +30,19 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
         this._eventRegistry = {};
     },
 
-    registerEvent: function(obj) {
-        if(!obj.type) {
+    registerEvent: function( obj ) {
+        if( !obj.type ) {
             M.Logger.log('Cannot register event because no event type passed.', M.CONST.LOGGER.TAG_FRAMEWORK_CORE);
             return false;
         }
 
-        if(!obj.source) {
+        if( !obj.source ) {
             M.Logger.log('Cannot register event because no event type passed.', M.CONST.LOGGER.TAG_FRAMEWORK_CORE);
             return false;
         }
 
-        if(this._isGlobalEvent(obj.type)) {
+        if( this._isGlobalEvent(obj.type) ) {
             /* case global events (orientationchange, resize, ...) */
-
 
 
         } else {
@@ -59,7 +58,7 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
                 /* save handler under property <view-id> to be able to call it later */
                 this._eventRegistry[obj.type][id] = obj.source.getEventHandler(obj.type);
 
-            } catch(e) {
+            } catch( e ) {
                 M.Logger.error('Error while trying to register event ' + obj.type + '. ' + e, M.CONST.LOGGER.TAG_FRAMEWORK_CORE);
                 throw M.Exception.INVALID_INPUT_PARAMETER.getException();
             }
@@ -71,15 +70,15 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
      *
      * @param obj
      */
-    delegateEvent: function(obj) {
+    delegateEvent: function( obj ) {
         var type = obj.evt.type;
         var id = obj.evt.target.id;
 
-        if(!this.eventRegistry[type]) {
+        if( !this.eventRegistry[type] ) {
             return;
         }
 
-        if(!this.eventRegistry[type][id]) {
+        if( !this.eventRegistry[type][id] ) {
             return;
         }
 
@@ -98,12 +97,12 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
      * @param {Boolean} passEvent Determines whether or not to pass the event and its target as the first parameters for the handler call.
      * @param {Array} parameters The (additional) parameters for the handler call.
      */
-    callHandler: function(handler, event, passEvent, parameters) {
-        if(!this.checkHandler(handler, (event && event.type ? event.type : 'undefined'))) {
+    callHandler: function( handler, event, passEvent, parameters ) {
+        if( !this.checkHandler(handler, (event && event.type ? event.type : 'undefined')) ) {
             return;
         }
 
-        if(!passEvent) {
+        if( !passEvent ) {
             this.bindToCaller(handler.target, handler.action, parameters)();
         } else {
             this.bindToCaller(handler.target, handler.action, [event.currentTarget.id ? event.currentTarget.id : event.currentTarget, event])();
@@ -117,7 +116,7 @@ M.EventDispatcher = M.Object.extend(/** @scope M.EventDispatcher.prototype */ {
      * @returns {Boolean} Flag determining whether event is seen as global or not
      * @private
      */
-    _isGlobalEvent: function(type) {
+    _isGlobalEvent: function( type ) {
         return _.include(this._globalEvents, type);
     }
 
