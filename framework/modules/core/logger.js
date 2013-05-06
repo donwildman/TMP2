@@ -105,7 +105,7 @@ M.Logger = M.Object.extend(/** @scope M.Logger.prototype */ {
     /**
      * Constructor method for M.Logger
      */
-    init: function () {
+    _init: function () {
 
         // Prevent a console.log from blowing things up if we are on a browser that doesn't support this.
         if (_.isUndefined(console)) {

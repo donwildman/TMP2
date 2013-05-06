@@ -101,31 +101,31 @@ test('callFromSuper implementation', function() {
 
 test('init implementation', function() {
 
-    ok(M.Object.hasOwnProperty('init'), 'M.Object.init is defined.');
+    ok(M.Object.hasOwnProperty('_init'), 'M.Object._init is defined.');
 
-    ok(typeof M.Object.init === 'function', 'M.Object.init() is a function.');
+    ok(typeof M.Object._init === 'function', 'M.Object._init() is a function.');
 
     M.NewObject = M.Object.extend({
         LEFT: 1,
         RIGHT: 2,
         default: null,
-        init: function() {
+        _init: function() {
             this.default = this.RIGHT;
         }
     });
 
-    ok(M.NewObject.default === 2, 'init() was successfully called out of extend().');
+    ok(M.NewObject.default === 2, '_init() was successfully called out of extend().');
 
     M.NewObject = M.Object.extend({
         LEFT: 1,
         RIGHT: 2
     });
 
-    ok(M.NewObject && typeof M.NewObject === 'object', 'no init() specified but object successfully created.');
+    ok(M.NewObject && typeof M.NewObject === 'object', 'no _init() specified but object successfully created.');
 
-    ok(!M.NewObject.hasOwnProperty('init'), 'no init() specified.');
+    ok(!M.NewObject.hasOwnProperty('_init'), 'no _init() specified.');
 
-    ok(Object.getPrototypeOf(M.NewObject).hasOwnProperty('init'), 'init() available via prototype.');
+    ok(Object.getPrototypeOf(M.NewObject).hasOwnProperty('_init'), '_init() available via prototype.');
 
     /* cleanup */
     M.NewObject = null;
@@ -139,17 +139,17 @@ test('handleCallback implementation', function() {
 
     throws(M.Object.handleCallback({
         target: M.Object,
-        action: 'init'
+        action: '_init'
     }, [1, 2, {}, 4]), 'target is an object, action is a string, arguments is an array.');
 
     throws(M.Object.handleCallback({
         target: M.Object,
-        action: 'init'
+        action: '_init'
     }, null), 'target is an object, action is a string, arguments is null.');
 
     throws(M.Object.handleCallback({
         target: M.Object,
-        action: 'init'
+        action: '_init'
     }), 'target is an object, action is a string, arguments is undefined.');
 
     throws(M.Object.handleCallback({
@@ -207,17 +207,17 @@ test('handleCallback implementation', function() {
 
     throws(M.Object.handleCallback({
         target: M.UndefinedObject,
-        action: 'init'
+        action: '_init'
     }, [1, 2, {}, 4]), 'target is undefined, action is a string, arguments is an array.');
 
     throws(M.Object.handleCallback({
         target: M.UndefinedObject,
-        action: 'init'
+        action: '_init'
     }, null), 'target is undefined, action is a string, arguments is null.');
 
     throws(M.Object.handleCallback({
         target: M.UndefinedObject,
-        action: 'init'
+        action: '_init'
     }), 'target is undefined, action is a string, arguments is undefined.');
 
     throws(M.Object.handleCallback({
@@ -544,8 +544,8 @@ test('extend implementation', function() {
 
     M.TestObject = M.Object.extend({
         prop1: 'prop1',
-        init: function() {
-            ok(this.prop1 === 'prop1', 'init of the testobject was called')
+        _init: function() {
+            ok(this.prop1 === 'prop1', '_init of the testobject was called')
         }
     });
 
@@ -554,7 +554,7 @@ test('extend implementation', function() {
         func: function() {
             ok(this.prop1 === 'prop1', 'Testobject has own function implementation')
         },
-        init: function() {
+        _init: function() {
             this.func();
         }
     });
