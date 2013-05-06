@@ -18,11 +18,55 @@ test('M.View Test', function() {
 
     ok(M.View.hasOwnProperty('design') && typeof M.View.design === 'function', 'design function is defined.');
 
-    ok(M.View.hasOwnProperty('_normalize') && typeof M.View._normalize === 'function', '_normalize function is defined.');
-
     var view = M.View.design();
 
     ok(view && view.type === 'M.View', 'design() returns an instance of M.View.');
+
+    ok(view && view._id, 'design() did set the view\'s _id property');
+
+    ok(M.View.hasOwnProperty('_normalize') && typeof M.View._normalize === 'function', '_normalize function is defined.');
+
+    ok(typeof(M.View._normalize()) === 'object', '_normalize() returns an object, even if it was called without params.');
+
+    ok(M.View.hasOwnProperty('_init') && typeof M.View.design === 'function', '_init function is defined.');
+
+    ok(M.View.hasOwnProperty('_preRender') && typeof M.View.design === 'function', '_preRender function is defined.');
+
+    ok(M.View.hasOwnProperty('_postRender') && typeof M.View.design === 'function', '_postRender function is defined.');
+
+    ok(M.View.hasOwnProperty('_createDOM') && typeof M.View.design === 'function', '_createDOM function is defined.');
+
+    ok(M.View.hasOwnProperty('_generateMarkup') && typeof M.View.design === 'function', '_generateMarkup function is defined.');
+
+    ok(M.View.hasOwnProperty('_addId') && typeof M.View.design === 'function', '_addId function is defined.');
+
+    ok(M.View.hasOwnProperty('getId') && typeof M.View.design === 'function', 'getId function is defined.');
+
+    ok(M.View.hasOwnProperty('_addTMPClasses') && typeof M.View.design === 'function', '_addTMPClasses function is defined.');
+
+    ok(M.View.hasOwnProperty('_getTMPClasses') && typeof M.View.design === 'function', '_getTMPClasses function is defined.');
+
+    ok(M.View.hasOwnProperty('_getCssClassByType') && typeof M.View.design === 'function', '_getCssClassByType function is defined.');
+
+    ok(M.View.hasOwnProperty('_renderChildViews') && typeof M.View.design === 'function', '_renderChildViews function is defined.');
+
+    ok(M.View.hasOwnProperty('_appendChildView') && typeof M.View.design === 'function', '_appendChildView function is defined.');
+
+    ok(M.View.hasOwnProperty('_childViewsAsArray') && typeof M.View.design === 'function', '_childViewsAsArray function is defined.');
+
+    ok(M.View.hasOwnProperty('_style') && typeof M.View.design === 'function', '_style function is defined.');
+
+    ok(M.View.hasOwnProperty('getDOM') && typeof M.View.design === 'function', 'getDOM function is defined.');
+
+    ok(M.View.hasOwnProperty('render') && typeof M.View.design === 'function', 'render function is defined.');
+
+    ok(M.View.hasOwnProperty('getValue') && typeof M.View.design === 'function', 'getValue function is defined.');
+
+    ok(M.View.hasOwnProperty('_getValueFromDOM') && typeof M.View.design === 'function', '_getValueFromDOM function is defined.');
+
+    ok(M.View.hasOwnProperty('setValue') && typeof M.View.design === 'function', 'setValue function is defined.');
+
+    ok(M.View.hasOwnProperty('update') && typeof M.View.design === 'function', 'update function is defined.');
 
     /* cleanup */
     view = null;
