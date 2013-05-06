@@ -60,3 +60,11 @@ M.Exception.RESERVED_WORD = M.Exception.extend(/** @scope M.Exception.prototype 
     message: 'Usage of a reserved word.',
     name: 'RESERVED_WORD'
 });
+
+/**
+    Event Dispatcher
+**/
+M.Exception.CORRUPT_VIEW_OBJECT_PASSED = M.Exception.extend(/** @scope M.Exception.prototype */{
+    message: 'A corrupt view object was passed. Necessary methods and functionality is not available.',
+    name: 'CORRUPT_VIEW_OBJECT_PASSED'
+});

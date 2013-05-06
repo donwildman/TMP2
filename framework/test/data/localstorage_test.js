@@ -4,7 +4,7 @@ test('M.DataConnectorLocalStorage', function() {
 
     TEST.LocalStorageConnector = M.DataConnectorLocalStorage.create({
         config: {
-            models: {
+            targets: {
                 developer: {
 
                 }
