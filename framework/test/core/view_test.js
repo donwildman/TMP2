@@ -94,10 +94,6 @@ test('M.View Test', function() {
 
     ok(M.View.hasOwnProperty('_themeChildViews') && typeof M.View.design === 'function', '_themeChildViews function is defined.');
 
-    ok(M.View.hasOwnProperty('getjQuerySelector') && typeof M.View.design === 'function', 'getjQuerySelector function is defined.');
-
-    ok(M.View.hasOwnProperty('get$') && typeof M.View.design === 'function', 'get$ function is defined.');
-
     /* cleanup */
     view = null;
 

@@ -23,15 +23,6 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
     type: 'M.View',
 
     /**
-     * This property contains the jQuery object for this view. It is automatically
-     * set once the view's DOM was created.
-     *
-     * @type Object
-     * @private
-     */
-    _$: null,
-
-    /**
      * This property contains the view's DOM representation.
      *
      * @type Object
@@ -195,29 +186,10 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _createDOM: function() {
-        if( !this._dom ) {
+        if( !this.getDOM() ) {
             var html = '<div>' + this._generateMarkup() + '</div>';
             this._dom = $(html);
-            this._$ = $(this);
         }
-    },
-
-    /**
-     * This method returns the corresponding jQuery selector for this view.
-     *
-     * @returns {Object|_$}
-     */
-    getjQuerySelector: function() {
-        return this._$;
-    },
-
-    /**
-     * This method is an alias method for getjQuerySelector().
-     *
-     * @returns {Object|_$}
-     */
-    get$: function() {
-        return this.getjQuerySelector();
     },
 
     /**
@@ -248,7 +220,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _addId: function() {
-        $(this._dom).attr('id', this.getId());
+        this.getDOM().attr('id', this.getId());
     },
 
     /**
@@ -268,7 +240,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _addTMPClasses: function() {
-        $(this._dom).addClass(Object.getPrototypeOf(this)._getTMPClasses().reverse().join(' '));
+        this.getDOM().addClass(Object.getPrototypeOf(this)._getTMPClasses().reverse().join(' '));
     },
 
     /**
@@ -320,7 +292,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _appendChildView: function( childViewDOM ) {
-        $(this._dom).append(childViewDOM);
+        this.getDOM().append(childViewDOM);
     },
 
     /**
@@ -339,7 +311,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _style: function() {
-        $(this._dom).addClass(this.cssClass);
+        this.getDOM().addClass(this.cssClass);
     },
 
     /**
@@ -370,7 +342,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _getValueFromDOM: function() {
-        return $(this._dom).text();
+        return this.getDOM().text();
     },
 
     /**
@@ -389,7 +361,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * jQuery's text() is used for this.
      */
     update: function() {
-        $(this._dom).text(this._getValueForDOM());
+        this.getDOM().text(this._getValueForDOM());
     }
 
 });
