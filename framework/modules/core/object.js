@@ -1,4 +1,18 @@
-M.Object = /** @scope M.Object.prototype */ {
+// ==========================================================================
+// Project:   The M-Project - Mobile HTML5 Application Framework
+// Copyright: (c) 2013 M-Way Solutions GmbH. All rights reserved.
+//            (c) 2013 panacoda GmbH. All rights reserved.
+// Creator:   Marco
+// Date:      08.01.2013
+// License:   Dual licensed under the MIT or GPL Version 2 licenses.
+//            http://github.com/mwaylabs/The-M-Project/blob/master/MIT-LICENSE
+//            http://github.com/mwaylabs/The-M-Project/blob/master/GPL-LICENSE
+// ==========================================================================
+
+/**
+ * @class
+ */
+M.Object = /** @scope M.Object.prototype */{
 
     /**
      * The type of this object.
@@ -98,15 +112,15 @@ M.Object = /** @scope M.Object.prototype */ {
      */
     handleCallback: function( handler ) {
         var args = Array.prototype.slice.call(arguments, 1);
-        if (handler) {
+        if( handler ) {
             var target = typeof handler.target === 'object' ? handler.target : this;
             var action = handler;
-            if (typeof handler.action === 'function') {
+            if( typeof handler.action === 'function' ) {
                 action = handler.action;
-            } else if (typeof handler.action === 'string') {
+            } else if( typeof handler.action === 'string' ) {
                 action = target[handler.action];
             }
-            if (typeof action === 'function') {
+            if( typeof action === 'function' ) {
                 return this.bindToCaller(target, action, args)();
             }
         }
@@ -134,7 +148,7 @@ M.Object = /** @scope M.Object.prototype */ {
      * @param {String} name
      * @param {Mixed} value
      */
-    defineHiddenProperty: function(name, value) {
+    defineHiddenProperty: function( name, value ) {
         this.defineProperty(name, value, {
             writable: YES,
             enumerable: NO,
@@ -148,7 +162,7 @@ M.Object = /** @scope M.Object.prototype */ {
      * @param {String} name
      * @param {Mixed} value
      */
-    defineReadonlyProperty: function(name, value) {
+    defineReadonlyProperty: function( name, value ) {
         this.defineProperty(name, value, {
             writable: NO,
             enumerable: YES,
@@ -163,7 +177,7 @@ M.Object = /** @scope M.Object.prototype */ {
      * @param {Mixed} value
      * @param {Object} config
      */
-    defineProperty: function(name, value, config) {
+    defineProperty: function( name, value, config ) {
         config = config || {};
         Object.defineProperty(this, name, {
             writable: !!config.writable,
