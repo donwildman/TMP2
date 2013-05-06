@@ -48,6 +48,13 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
     _isMView: YES,
 
     /**
+     * This property contains a view's event handlers.
+     *
+     * @type {Object}
+     */
+    events: null,
+
+    /**
      * This property can be used to add custom css class/classes to the rendered view. This allows
      * custom styling.
      *
@@ -77,6 +84,32 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
     },
 
     /**
+     * M.View's _init method.
+     *
+     * @private
+     */
+    _init: function() {
+        this.events = this.events || {};
+    },
+
+    /**
+     * This method is responsible for processing the rendering of a view. It is split
+     * into several methods that cover a single task each.
+     *
+     * @returns {Object|_dom}
+     */
+    render: function() {
+        this._preRender();
+        this._createDOM();
+        this._addId();
+        this._addTMPClasses();
+        this._renderChildViews();
+        this._style();
+
+        return this.getDOM();
+    },
+
+    /**
      * This method is used internally to process the configuration object for the view
      * before handing it to the extend method. The job of this method is to make sure that
      * the configuration object fits the requirements of the extend process.
@@ -86,7 +119,211 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _normalize: function( obj ) {
+        obj = obj || {};
+        obj.events = obj.events || {};
+
         return obj;
+    },
+
+    /**
+     * This method is called just before a view gets rendered. It can be used to update
+     * or modify some properties of the view.
+     *
+     * @private
+     */
+    _preRender: function() {
+        this.handleCallback(this.events.preRender);
+    },
+
+    /**
+     * This method is called just after a view gets rendered. It can be used to update
+     * or modify some properties of the view.
+     *
+     * Note: Since this happens after the rendering process, the view's DOM can be
+     * accessed!
+     *
+     * @private
+     */
+    _postRender: function() {
+        this.handleCallback(this.events.postRender);
+    },
+
+    /**
+     * This method triggers the actual markup generation and packs the result into the view's
+     * internally used _dom property.
+     *
+     * @private
+     */
+    _createDOM: function() {
+        if( this._dom ) {
+            return this._dom;
+        }
+
+        var html = '<div>' + this._generateMarkup() + '</div>'
+        this._dom = $(html);
+    },
+
+    /**
+     * This method generates the view's markup for the DOM. In M.View's basic implementation,
+     * it only returns the view's value.
+     *
+     * @returns {String|value}
+     * @private
+     */
+    _generateMarkup: function() {
+        return this.value;
+    },
+
+    /**
+     * This method adds the view's ID to the view's DOM's root element.
+     *
+     * @private
+     */
+    _addId: function() {
+        $(this._dom).attr('id', this.getId());
+    },
+
+    /**
+     * This method returns the view's unique at ID. This ID is automatically generated
+     * on the creation if the view.
+     *
+     * @returns {String|_id}
+     */
+    getId: function() {
+        return this._id;
+    },
+
+    /**
+     * This method adds css classes to the view's root DOM object. These classes are
+     * based on the view's type and its prototype chain.
+     *
+     * @private
+     */
+    _addTMPClasses: function() {
+        $(this._dom).addClass(Object.getPrototypeOf(this)._getTMPClasses().reverse().join(' '));
+    },
+
+    /**
+     * This method adds the current view's type as a css class name to an array of css
+     * classes (or creates this array if it did not exist yet).
+     *
+     * @param cssClasses
+     * @returns {Array}
+     * @private
+     */
+    _getTMPClasses: function( cssClasses ) {
+        if( !cssClasses ) {
+            cssClasses = [];
+        }
+        cssClasses.push(this._getCssClassByType());
+        if( this !== M.View ) {
+            Object.getPrototypeOf(this)._getTMPClasses(cssClasses);
+        }
+        return cssClasses;
+    },
+
+    /**
+     * This method returns a view's type as a css class. It therefore replaces
+     * any '.' in the type with a '-' and transforms the whole result into
+     * lowercase. So e.g. the type 'M.View' would be transformed to 'm-view'.
+     *
+     * @returns {String}
+     * @private
+     */
+    _getCssClassByType: function() {
+        return this.type.replace('.', '-').toLowerCase();
+    },
+
+    /**
+     * This method initializes the rendering process for each available child view.
+     *
+     * @private
+     */
+    _renderChildViews: function() {
+        _.each(this._childViewsAsArray(), function( childView ) {
+            this._appendChildView(this[childView].render())
+        }, this);
+    },
+
+    /**
+     * This method appends a child views DOM to this view's DOM.
+     *
+     * @param childViewDOM
+     * @private
+     */
+    _appendChildView: function( childViewDOM ) {
+        $(this._dom).append(childViewDOM);
+    },
+
+    /**
+     * This method return a view's childViews property as an array to allow iteration.
+     *
+     * @returns {Array}
+     * @private
+     */
+    _childViewsAsArray: function() {
+        return this.childViews ? $.trim(this.childViews.replace(/\s+/g, ' ')).split(' ') : [];
+    },
+
+    /**
+     * This method adds css classes defined in cssClass to the view's root DOM object.
+     *
+     * @private
+     */
+    _style: function() {
+        $(this._dom).addClass(this.cssClass);
+    },
+
+    /**
+     * This method returns the view's DOM.
+     *
+     * @returns {Object|_dom}
+     */
+    getDOM: function() {
+        return this._dom;
+    },
+
+    /**
+     * This method gets the view's current value by reading it directly from its DOM
+     * representation.
+     *
+     * @returns {String|value}
+     */
+    getValue: function() {
+        this.value = this._getValueFromDOM();
+        return this.value;
+    },
+
+    /**
+     * This method returns the view's value from the DOM. In this basic implementation it simply
+     * gets the text() value (cp. jQuery).
+     *
+     * @returns {*|jQuery}
+     * @private
+     */
+    _getValueFromDOM: function() {
+        return $(this._dom).text();
+    },
+
+    /**
+     * This method is responsible for setting the view's value. It sets both the JavaScript object's
+     * value property and updates the DOM by calling the internally used update() method.
+     *
+     * @param value
+     */
+    setValue: function( value ) {
+        this.value = value;
+        this.update(this.value);
+    },
+
+    /**
+     * This method updated the view's DOM based on a passed value. In this basic implementation,
+     * jQuery's text() is used for this.
+     *
+     * @param value
+     */
+    update: function( value ) {
+        $(this._dom).text(value);
     }
 
 });
