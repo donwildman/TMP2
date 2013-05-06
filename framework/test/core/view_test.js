@@ -32,6 +32,26 @@ test('M.View Test', function() {
 
     ok(M.View.hasOwnProperty('_preRender') && typeof M.View.design === 'function', '_preRender function is defined.');
 
+    var updatedValue = 'Updated in preRender';
+    view = M.View.design({
+        value: 'hi dom',
+        events: {
+            preRender: function() {
+                    this.value = updatedValue;
+            },
+            postRender: {
+                action: function() {
+                    M.Logger.log('my post render callback!');
+                }
+            }
+        }
+    });
+    var viewDOM = view.render();
+
+    ok(view && view.value === updatedValue, '_preRender was called and updated the view\'s value.');
+
+    ok(viewDOM && viewDOM.text() === updatedValue, '_preRender was called before the actual rendering/markup generation.');
+
     ok(M.View.hasOwnProperty('_postRender') && typeof M.View.design === 'function', '_postRender function is defined.');
 
     ok(M.View.hasOwnProperty('_createDOM') && typeof M.View.design === 'function', '_createDOM function is defined.');
