@@ -54,7 +54,7 @@ M.LayoutManager = M.Object.extend(/** @scope M.LayoutManager.prototype */{
             return;
         }
 
-        this.layout.setContent(obj);
+        this.layout._setContent(obj);
     }
 
 });
