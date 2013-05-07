@@ -25,8 +25,8 @@ test('M Namespace', function () {
 test('locale storage', function () {
 
     var putSomethingToTheLocaleStorage = function () {
-        M.Application = {};
-        M.Application.name = 'test';
+        M.Application = M.Application || {};
+        M.Application.name = M.Application.name || 'test';
         localStorage.setItem('test0', 'test0');
         localStorage.setItem('test1', 'test1');
         localStorage.setItem(M.LOCAL_STORAGE_PREFIX + M.Application.name + M.LOCAL_STORAGE_SUFFIX + 'test0', M.LOCAL_STORAGE_PREFIX + M.Application.name + M.LOCAL_STORAGE_SUFFIX + 'test0');
