@@ -117,6 +117,30 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
     },
 
     /**
+     * This method is called once the view got appended to the live DOM. It triggers
+     * the registered callbacks for post rendering and initializes the theming for
+     * all of its child views by calling _themeChildViews().
+     *
+     * Within this method (and the triggered post rendering callbacks) the live DOM can be
+     * accessed. This allows to e.g. get the view's dimensions for theming/styling purpose.
+     */
+    theme: function() {
+        this._postRender();
+        this._themeChildViews();
+    },
+
+    /**
+     * This method initializes the theming process for each available child view.
+     *
+     * @private
+     */
+    _themeChildViews: function() {
+        _.each(this._childViewsAsArray(), function( childView ) {
+            this[childView].theme();
+        }, this);
+    },
+
+    /**
      * This method is used internally to process the configuration object for the view
      * before handing it to the extend method. The job of this method is to make sure that
      * the configuration object fits the requirements of the extend process.
@@ -162,23 +186,32 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _createDOM: function() {
-        if( this._dom ) {
-            return this._dom;
+        if( !this.getDOM() ) {
+            var html = '<div>' + this._generateMarkup() + '</div>';
+            this._dom = $(html);
         }
-
-        var html = '<div>' + this._generateMarkup() + '</div>'
-        this._dom = $(html);
     },
 
     /**
      * This method generates the view's markup for the DOM. In M.View's basic implementation,
-     * it only returns the view's value.
+     * it only returns the view's value (by calling _getValueForDOM() internally).
      *
      * @returns {String|value}
      * @private
      */
     _generateMarkup: function() {
-        return this.value;
+        return this._getValueForDOM();
+    },
+
+    /**
+     * This method is responsible for returning the view's value prepared for adding it to
+     * the DOM. In this basic implementation this simply return the view's value property.
+     *
+     * @returns {String|value}
+     * @private
+     */
+    _getValueForDOM: function() {
+        return this.value ? this.value : '';
     },
 
     /**
@@ -187,7 +220,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _addId: function() {
-        $(this._dom).attr('id', this.getId());
+        this.getDOM().attr('id', this.getId());
     },
 
     /**
@@ -207,7 +240,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _addTMPClasses: function() {
-        $(this._dom).addClass(Object.getPrototypeOf(this)._getTMPClasses().reverse().join(' '));
+        this.getDOM().addClass(Object.getPrototypeOf(this)._getTMPClasses().reverse().join(' '));
     },
 
     /**
@@ -259,7 +292,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _appendChildView: function( childViewDOM ) {
-        $(this._dom).append(childViewDOM);
+        this.getDOM().append(childViewDOM);
     },
 
     /**
@@ -278,7 +311,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _style: function() {
-        $(this._dom).addClass(this.cssClass);
+        this.getDOM().addClass(this.cssClass);
     },
 
     /**
@@ -309,7 +342,7 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * @private
      */
     _getValueFromDOM: function() {
-        return $(this._dom).text();
+        return this.getDOM().text();
     },
 
     /**
@@ -320,17 +353,15 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      */
     setValue: function( value ) {
         this.value = value;
-        this.update(this.value);
+        this.update();
     },
 
     /**
-     * This method updated the view's DOM based on a passed value. In this basic implementation,
+     * This method updated the view's DOM based on the value property. In this basic implementation,
      * jQuery's text() is used for this.
-     *
-     * @param value
      */
-    update: function( value ) {
-        $(this._dom).text(value);
+    update: function() {
+        this.getDOM().text(this._getValueForDOM());
     }
 
 });

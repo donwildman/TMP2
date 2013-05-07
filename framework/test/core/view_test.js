@@ -86,7 +86,13 @@ test('M.View Test', function() {
 
     ok(M.View.hasOwnProperty('setValue') && typeof M.View.design === 'function', 'setValue function is defined.');
 
+    ok(M.View.hasOwnProperty('_getValueForDOM') && typeof M.View.design === 'function', '_getValueForDOM function is defined.');
+
     ok(M.View.hasOwnProperty('update') && typeof M.View.design === 'function', 'update function is defined.');
+
+    ok(M.View.hasOwnProperty('theme') && typeof M.View.design === 'function', 'theme function is defined.');
+
+    ok(M.View.hasOwnProperty('_themeChildViews') && typeof M.View.design === 'function', '_themeChildViews function is defined.');
 
     /* cleanup */
     view = null;
