@@ -8,9 +8,9 @@ test('M.View Test', function() {
 
     ok(M.View.hasOwnProperty('_id'), 'M.View has _id property.');
 
-    ok(M.View.hasOwnProperty('_isMView') && typeof M.View._isMView === 'boolean', 'M.View has _isMView property.');
+    ok(M.View.hasOwnProperty('isMView') && typeof M.View.isMView === 'boolean', 'M.View has isMView property.');
 
-    ok(M.View.hasOwnProperty('_isMView') && typeof M.View._isMView === 'boolean' && M.View._isMView === YES, 'M.View _isMView is true.');
+    ok(M.View.hasOwnProperty('isMView') && typeof M.View.isMView === 'boolean' && M.View.isMView === YES, 'M.View isMView is true.');
 
     ok(M.View.hasOwnProperty('cssClass'), 'M.View has cssClass property.');
 

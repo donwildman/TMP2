@@ -43,9 +43,8 @@ M.View = M.Object.extend(/** @scope M.View.prototype */{
      * This property is used to identify M.View and all of its derived object as views.
      *
      * @type Boolean
-     * @private
      */
-    _isMView: YES,
+    isMView: YES,
 
     /**
      * This property contains a view's event handlers.

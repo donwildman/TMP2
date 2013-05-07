@@ -29,11 +29,11 @@ M.LayoutManager = M.Object.extend(/** @scope M.LayoutManager.prototype */{
      * @param layout
      */
     setLayout: function( layout ) {
-        if( !(layout && layout._isMLayout) ) {
+        if( !(layout && layout.isMLayout) ) {
             return;
         }
 
-        if( !(Object.getPrototypeOf(layout)._isMLayout && Object.getPrototypeOf(layout).type === layout.type ) ) {
+        if( !(Object.getPrototypeOf(layout).isMLayout && Object.getPrototypeOf(layout).type === layout.type ) ) {
             layout = layout.design()
         }
 

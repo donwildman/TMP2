@@ -27,9 +27,8 @@ M.Layout = M.View.extend(/** @scope M.Layout.prototype */{
      * as layouts.
      *
      * @type Boolean
-     * @private
      */
-    _isMLayout: YES,
+    isMLayout: YES,
 
     /**
      * This method sets the layout's content.
@@ -38,7 +37,7 @@ M.Layout = M.View.extend(/** @scope M.Layout.prototype */{
      * @private
      */
     _setContent: function( obj ) {
-        if( !(obj && obj.view && obj.view._isMView) ) {
+        if( !(obj && obj.view && obj.view.isMView) ) {
             return;
         }
 
